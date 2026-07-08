@@ -1,0 +1,6 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Forge logo</title>
+  <desc id="desc">A compact geometric F mark with a small forge spark.</desc>
+  <path fill="#11181C" fill-rule="evenodd" clip-rule="evenodd" d="M28 24h52v18H48v16h28v18H48v28H28V24Z"/>
+  <path fill="#11181C" d="M94 24l5.8 15.2L115 45l-15.2 5.8L94 66l-5.8-15.2L73 45l15.2-5.8L94 24Z"/>
+</svg>

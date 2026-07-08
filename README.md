@@ -1,5 +1,9 @@
 # Forge
 
+<p align="center">
+  <img src="docs/assets/forge-logo.svg" alt="Forge logo" width="96" height="96" />
+</p>
+
 Forge is the shared Kotlin foundation for `com.star.*` apps and SDKs.
 
 The first module is `:forge`, published under the package family `com.star.forge.*`. It is a Compose Multiplatform library for Android and iOS. Its UI kit lives under `com.star.forge.kit` and currently contains only:
