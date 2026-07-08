@@ -23,6 +23,12 @@ The first app surface is `ForgeKitDemo`, a useful kit workspace rather than a th
 - `:forge-kit-demo-android`: Android launcher app for the shared demo UI.
 - `iosApp`: lightweight SwiftUI host example for the generated iOS framework.
 
+The first real app is currently named `StarMeal`:
+
+- `:star-meal`: shared Compose Multiplatform meal tracking UI and iOS framework.
+- `:star-meal-android`: Android launcher app.
+- The name can change later; the stable goal is photo/manual meal capture, nutrition estimation, confidence, and profile-aware possible concern flags.
+
 ## Package Direction
 
 Apps should use `com.star.{appname}`.
@@ -52,6 +58,8 @@ ForgeKitTheme(
 ./gradlew :forge:assemble
 ./gradlew :forge-kit-demo-android:assembleDebug
 ./gradlew :forge-kit-demo:linkDebugFrameworkIosSimulatorArm64
+./gradlew :star-meal-android:assembleDebug
+./gradlew :star-meal:linkDebugFrameworkIosSimulatorArm64
 ```
 
 ## IDE Setup
