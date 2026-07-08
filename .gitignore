@@ -17,3 +17,7 @@ DerivedData/
 xcuserdata/
 **/xcuserdata/
 .swiftpm/
+
+# Local app experiments that will move into their own repositories.
+/star-meal/
+/star-meal-android/
