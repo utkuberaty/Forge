@@ -1,0 +1,19 @@
+.gradle/
+.idea/
+.kotlin/
+build/
+**/build/
+local.properties
+*.iml
+*.apk
+*.aab
+*.keystore
+keystore.properties
+.DS_Store
+
+# Xcode local state
+DerivedData/
+*.xcuserstate
+xcuserdata/
+**/xcuserdata/
+.swiftpm/
