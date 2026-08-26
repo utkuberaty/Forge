@@ -26,7 +26,8 @@ and release maintainers.
    Run Compose behavior/semantics tests with `:forge:iosSimulatorArm64Test`.
    Run Android screenshot regression checks with `:forge-visual-tests:verifyRoborazziDebug`.
    Release tags publish through GitHub Actions to GitHub Packages; never put package credentials
-   in repository files.
+   in repository files. If release-event delivery fails, dispatch `release.yml` with the existing
+   release version so it checks out the immutable tag.
 
 ## Invariants
 

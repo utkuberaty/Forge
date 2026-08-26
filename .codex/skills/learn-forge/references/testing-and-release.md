@@ -24,5 +24,7 @@ host tests execute the pure token, validation, feedback, and slider suites.
 Public releases are immutable and originate from GitHub Releases tagged `v<version>`. The release
 workflow publishes all KMP artifacts to the GitHub Packages Gradle registry with its scoped
 `GITHUB_TOKEN`. Consumers authenticate with a classic personal access token carrying
-`read:packages`. Maven Central publication is also configured and runs only when Central and PGP
-secrets are present. Credentials and signing material are supplied only through CI secrets.
+`read:packages`. If the release event is not delivered, manually dispatch `release.yml` with the
+existing tag's version; the workflow checks out that tag before publishing. Maven Central
+publication is also configured and runs only when Central and PGP secrets are present. Credentials
+and signing material are supplied only through CI secrets.

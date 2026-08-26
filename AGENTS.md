@@ -63,4 +63,6 @@ file, `.codex/skills/learn-forge/SKILL.md`, and the relevant skill reference.
 
 GitHub Releases tagged `v<version>` publish immutable KMP artifacts to GitHub Packages using the
 workflow `GITHUB_TOKEN`. Never commit package, Maven Central, or signing credentials. Maven Central
-publishing is optional until the namespace, credentials, and signing key are configured.
+publishing is optional until the namespace, credentials, and signing key are configured. If a
+release event is not delivered, manually dispatch `release.yml` with the existing tag's version;
+the workflow checks out that immutable tag.
