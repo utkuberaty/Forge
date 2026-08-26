@@ -1,0 +1,6 @@
+root = true
+
+[*.{kt,kts}]
+ktlint_code_style = ktlint_official
+# Compose and exported UIKit entry points intentionally use PascalCase function names.
+ktlint_standard_function-naming = disabled

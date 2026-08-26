@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import com.star.forge.kit.theme.LocalForgeContentColor
 import com.star.forge.kit.theme.ForgeTheme
+import com.star.forge.kit.theme.LocalForgeContentColor
 
 /**
  * Forge-owned surface primitive.
@@ -20,23 +20,25 @@ import com.star.forge.kit.theme.ForgeTheme
  * content-color defaults without wrapping Material `Surface`.
  */
 @Composable
-fun ForgeSurface(
+public fun ForgeSurface(
     modifier: Modifier = Modifier,
     shape: Shape = ForgeTheme.shapes.medium,
     color: Color = ForgeTheme.colors.surface,
     contentColor: Color = ForgeTheme.colors.onSurface,
-    border: BorderStroke? = BorderStroke(
-        width = ForgeTheme.borders.thin,
-        color = ForgeTheme.colors.border,
-    ),
+    border: BorderStroke? =
+        BorderStroke(
+            width = ForgeTheme.borders.thin,
+            color = ForgeTheme.colors.border,
+        ),
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(LocalForgeContentColor provides contentColor) {
         Box(
-            modifier = modifier
-                .clip(shape)
-                .background(color, shape)
-                .then(if (border != null) Modifier.border(border, shape) else Modifier),
+            modifier =
+                modifier
+                    .clip(shape)
+                    .background(color, shape)
+                    .then(if (border != null) Modifier.border(border, shape) else Modifier),
         ) {
             content()
         }

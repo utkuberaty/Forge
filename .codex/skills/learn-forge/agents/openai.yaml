@@ -1,0 +1,6 @@
+interface:
+  display_name: "Learn Forge"
+  short_description: "Develop and integrate the Forge mobile UI kit"
+  default_prompt: "Use $learn-forge to customize or develop the Forge mobile UI kit."
+policy:
+  allow_implicit_invocation: true

@@ -7,10 +7,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -20,173 +20,167 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import com.star.forge.kit.theme.LocalForgeContentColor
+import com.star.forge.kit.theme.ForgeIconButtonSize
 import com.star.forge.kit.theme.ForgeTheme
 
-/** Visual treatment for [ForgeIconButton]. */
-enum class ForgeIconButtonVariant {
-    /** Low-emphasis icon-only action. */
-    Ghost,
+public enum class ForgeIconButtonVariant { Ghost, Primary, Tonal, Outline, Danger }
 
-    /** Main icon-only action. */
-    Primary,
-
-    /** Supporting filled icon-only action. */
-    Tonal,
-
-    /** Transparent icon-only action with an outline. */
-    Outline,
-
-    /** Destructive icon-only action. */
-    Danger,
-}
-
-/** Touch target scale for [ForgeIconButton]. */
-enum class ForgeIconButtonSize(
-    val touchTarget: Dp,
-    val iconSize: Dp,
-) {
-    Small(touchTarget = 36.dp, iconSize = 16.dp),
-    Medium(touchTarget = 44.dp, iconSize = 20.dp),
-    Large(touchTarget = 52.dp, iconSize = 24.dp),
-}
-
-/** Color state model for custom Forge icon buttons. */
 @Immutable
-data class ForgeIconButtonColors(
-    val container: Color,
-    val content: Color,
-    val pressedContainer: Color = container.copy(alpha = 0.86f),
-    val disabledContainer: Color,
-    val disabledContent: Color,
-    val border: Color? = null,
-    val pressedBorder: Color? = border,
-    val disabledBorder: Color? = border?.copy(alpha = 0.36f),
+public data class ForgeIconButtonColors(
+    public val container: Color,
+    public val content: Color,
+    public val pressedContainer: Color,
+    public val disabledContainer: Color,
+    public val disabledContent: Color,
+    public val border: Color? = null,
+    public val pressedBorder: Color? = border,
+    public val disabledBorder: Color? = border,
 ) {
-    fun container(enabled: Boolean, pressed: Boolean): Color = when {
-        !enabled -> disabledContainer
-        pressed -> pressedContainer
-        else -> container
-    }
-
-    fun content(enabled: Boolean): Color = if (enabled) content else disabledContent
-
-    fun border(enabled: Boolean, pressed: Boolean): Color? = when {
-        !enabled -> disabledBorder
-        pressed -> pressedBorder
-        else -> border
-    }
-}
-
-object ForgeIconButtonDefaults {
-    /** Default Forge-owned icon button colors for each [ForgeIconButtonVariant]. */
-    @Composable
-    fun colors(variant: ForgeIconButtonVariant): ForgeIconButtonColors {
-        val disabledContainer = ForgeTheme.colors.onSurface.copy(alpha = 0.10f)
-        val disabledContent = ForgeTheme.colors.onSurface.copy(alpha = 0.38f)
-
-        return when (variant) {
-            ForgeIconButtonVariant.Ghost -> ForgeIconButtonColors(
-                container = Color.Transparent,
-                content = ForgeTheme.colors.onSurfaceVariant,
-                pressedContainer = ForgeTheme.colors.onSurface.copy(alpha = 0.10f),
-                disabledContainer = Color.Transparent,
-                disabledContent = disabledContent,
-            )
-
-            ForgeIconButtonVariant.Primary -> ForgeIconButtonColors(
-                container = ForgeTheme.colors.primary,
-                content = ForgeTheme.colors.onPrimary,
-                disabledContainer = disabledContainer,
-                disabledContent = disabledContent,
-            )
-
-            ForgeIconButtonVariant.Tonal -> ForgeIconButtonColors(
-                container = ForgeTheme.colors.secondaryContainer,
-                content = ForgeTheme.colors.onSecondaryContainer,
-                disabledContainer = disabledContainer,
-                disabledContent = disabledContent,
-            )
-
-            ForgeIconButtonVariant.Outline -> ForgeIconButtonColors(
-                container = Color.Transparent,
-                content = ForgeTheme.colors.primary,
-                pressedContainer = ForgeTheme.colors.primary.copy(alpha = 0.10f),
-                disabledContainer = Color.Transparent,
-                disabledContent = disabledContent,
-                border = ForgeTheme.colors.borderStrong,
-                pressedBorder = ForgeTheme.colors.primary,
-            )
-
-            ForgeIconButtonVariant.Danger -> ForgeIconButtonColors(
-                container = ForgeTheme.colors.error,
-                content = ForgeTheme.colors.onError,
-                disabledContainer = disabledContainer,
-                disabledContent = disabledContent,
-            )
+    public fun container(
+        enabled: Boolean,
+        pressed: Boolean,
+    ): Color =
+        when {
+            !enabled -> disabledContainer
+            pressed -> pressedContainer
+            else -> container
         }
+
+    public fun content(enabled: Boolean): Color = if (enabled) content else disabledContent
+
+    public fun border(
+        enabled: Boolean,
+        pressed: Boolean,
+    ): Color? =
+        when {
+            !enabled -> disabledBorder
+            pressed -> pressedBorder
+            else -> border
+        }
+}
+
+public object ForgeIconButtonDefaults {
+    @Composable
+    public fun colors(variant: ForgeIconButtonVariant): ForgeIconButtonColors {
+        val opacity = ForgeTheme.opacity
+        val visual = ForgeTheme.components.iconButton.visuals
+        val disabledContainer = ForgeTheme.colors.onSurface.copy(alpha = opacity.disabledContainer)
+        val disabledContent = ForgeTheme.colors.onSurface.copy(alpha = opacity.disabledContent)
+        val base =
+            when (variant) {
+                ForgeIconButtonVariant.Ghost ->
+                    ForgeIconButtonColors(
+                        Color.Transparent,
+                        ForgeTheme.colors.onSurfaceVariant,
+                        ForgeTheme.colors.onSurface.copy(alpha = opacity.subtle),
+                        Color.Transparent,
+                        disabledContent,
+                    )
+                ForgeIconButtonVariant.Primary ->
+                    ForgeIconButtonColors(
+                        ForgeTheme.colors.primary,
+                        ForgeTheme.colors.onPrimary,
+                        ForgeTheme.colors.primary.copy(alpha = opacity.pressed),
+                        disabledContainer,
+                        disabledContent,
+                    )
+                ForgeIconButtonVariant.Tonal ->
+                    ForgeIconButtonColors(
+                        ForgeTheme.colors.secondaryContainer,
+                        ForgeTheme.colors.onSecondaryContainer,
+                        ForgeTheme.colors.secondaryContainer.copy(alpha = opacity.pressed),
+                        disabledContainer,
+                        disabledContent,
+                    )
+                ForgeIconButtonVariant.Outline ->
+                    ForgeIconButtonColors(
+                        Color.Transparent,
+                        ForgeTheme.colors.primary,
+                        ForgeTheme.colors.primary.copy(alpha = opacity.subtle),
+                        Color.Transparent,
+                        disabledContent,
+                        ForgeTheme.colors.borderStrong,
+                        ForgeTheme.colors.primary,
+                        ForgeTheme.colors.borderStrong.copy(alpha = opacity.disabledContent),
+                    )
+                ForgeIconButtonVariant.Danger ->
+                    ForgeIconButtonColors(
+                        ForgeTheme.colors.error,
+                        ForgeTheme.colors.onError,
+                        ForgeTheme.colors.error.copy(alpha = opacity.pressed),
+                        disabledContainer,
+                        disabledContent,
+                    )
+            }
+        return base.copy(
+            container = visual.container ?: base.container,
+            content = visual.content ?: base.content,
+            disabledContainer = visual.disabledContainer ?: base.disabledContainer,
+            disabledContent = visual.disabledContent ?: base.disabledContent,
+            border = visual.border ?: base.border,
+        )
     }
 }
 
-/**
- * Standard Forge icon button.
- *
- * This is a custom icon-only button. Pass icon props through [icon] so the
- * primitive can control sizing, tint, state colors, and accessibility.
- * Use [ForgeIconSpec.contentDescription] for the button label.
- */
 @Composable
-fun ForgeIconButton(
+public fun ForgeIconButton(
     onClick: () -> Unit,
     icon: ForgeIconSpec,
+    accessibilityLabel: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     variant: ForgeIconButtonVariant = ForgeIconButtonVariant.Ghost,
-    size: ForgeIconButtonSize = ForgeIconButtonSize.Medium,
-    iconSize: Dp = size.iconSize,
-    shape: Shape = RoundedCornerShape(ForgeTheme.radii.md),
+    size: ForgeIconButtonSize = ForgeTheme.components.iconButton.medium,
+    shape: Shape =
+        RoundedCornerShape(
+            ForgeTheme.components.iconButton.visuals.cornerRadius
+                ?: ForgeTheme.components.iconButton.cornerRadius
+                ?: ForgeTheme.radii.md,
+        ),
     colors: ForgeIconButtonColors = ForgeIconButtonDefaults.colors(variant),
 ) {
+    require(accessibilityLabel.isNotBlank()) { "icon-only actions require a meaningful accessibilityLabel" }
+    require(size.visualSize.value > 0f && size.iconSize.value > 0f && size.iconSize <= size.visualSize) {
+        "icon button dimensions must be positive and the icon must fit its visual size"
+    }
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
-    val containerColor = colors.container(enabled = enabled, pressed = pressed)
-    val contentColor = colors.content(enabled = enabled)
-    val borderColor = colors.border(enabled = enabled, pressed = pressed)
+    val touchTarget = ForgeTheme.components.iconButton.minimumTouchTarget ?: ForgeTheme.touchTargets.minimum
+    val container = colors.container(enabled, pressed)
+    val content = colors.content(enabled)
+    val borderColor = colors.border(enabled, pressed)
     val border = borderColor?.let { BorderStroke(ForgeTheme.borders.thin, it) }
 
-    CompositionLocalProvider(LocalForgeContentColor provides contentColor) {
-        Box(
-            modifier = modifier
-                .size(size.touchTarget)
-                .clip(shape)
-                .background(containerColor, shape)
-                .then(if (border != null) Modifier.border(border, shape) else Modifier)
-                .clickable(
-                    interactionSource = interactionSource,
-                    indication = null,
-                    enabled = enabled,
-                    role = Role.Button,
-                    onClick = onClick,
-                )
+    Box(
+        modifier =
+            modifier
+                .defaultMinSize(minWidth = touchTarget, minHeight = touchTarget)
+                .clickable(interactionSource, indication = null, enabled = enabled, role = Role.Button, onClick = onClick)
                 .semantics(mergeDescendants = true) {
-                    if (!enabled) {
-                        disabled()
-                    }
+                    contentDescription = accessibilityLabel
+                    if (!enabled) disabled()
                 },
+        contentAlignment = Alignment.Center,
+    ) {
+        Box(
+            modifier =
+                Modifier
+                    .size(size.visualSize)
+                    .clip(shape)
+                    .background(container, shape)
+                    .then(if (border != null) Modifier.border(border, shape) else Modifier),
             contentAlignment = Alignment.Center,
         ) {
             ForgeIcon(
-                spec = icon.copy(size = iconSize),
-                modifier = Modifier.size(iconSize),
-                tint = icon.tint.takeIfSpecified(contentColor),
+                spec = icon.copy(contentDescription = null, size = size.iconSize),
+                modifier = Modifier.size(size.iconSize),
+                tint = icon.tint.takeIfSpecified(content),
             )
         }
     }
 }
 
-private fun Color.takeIfSpecified(fallback: Color): Color =
-    if (this == Color.Unspecified) fallback else this
+private fun Color.takeIfSpecified(fallback: Color): Color = if (this == Color.Unspecified) fallback else this

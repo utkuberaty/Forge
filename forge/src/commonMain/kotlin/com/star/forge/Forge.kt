@@ -6,10 +6,10 @@ package com.star.forge
  * App modules should use packages like `com.star.{appname}`. Shared library
  * modules should stay under `com.star.forge.*`.
  */
-object Forge {
+public object Forge {
     /** Maven/package group reserved for Forge libraries. */
-    const val GROUP = "com.star.forge"
+    public const val GROUP: String = "io.github.utkuberaty"
 
     /** Package family for the reusable Forge UI kit. */
-    const val KIT_PACKAGE = "com.star.forge.kit"
+    public const val KIT_PACKAGE: String = "com.star.forge.kit"
 }

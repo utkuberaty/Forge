@@ -1,78 +1,106 @@
-# Forge
+# Forge Kit
 
 <p align="center">
   <img src="docs/assets/forge-logo.svg" alt="Forge logo" width="96" height="96" />
 </p>
 
-Forge is the shared Kotlin foundation for `com.star.*` apps and SDKs.
+Forge Kit is a customizable Compose Multiplatform UI kit for Android and iOS. It provides
+low-level, accessible mobile primitives backed by immutable typed design tokens rather than
+Material component wrappers or raw design values.
 
-The first module is `:forge`, published under the package family `com.star.forge.*`. It is a Compose Multiplatform library for Android and iOS. Its UI kit lives under `com.star.forge.kit` and currently contains only:
+The public package is `io.github.utkuberaty:forge-kit`. Kotlin APIs remain under
+`com.star.forge.kit.*`.
 
-- `com.star.forge.kit.theme`: configurable spacing, radii, borders, colors, typography, and `ForgeKitTheme`.
-- `com.star.forge.kit.primitives`: Forge-owned primitives for buttons, icon buttons, icons, symbols, images, checkboxes, switches, sliders, surfaces, text, text fields, and dividers.
+## Platforms
 
-Forge primitives should be custom first. We do not use Material buttons, icon buttons, checkboxes, switches, sliders, text fields, surfaces, text, symbols, or dividers.
+- Android API 23 and newer.
+- iOS ARM64 devices.
+- iOS Simulator ARM64.
 
-Accessibility is part of the primitive API. Interactive primitives expose roles, disabled states, labels where needed, text field validation semantics, and slider range/set-progress semantics. Apps should still provide product-specific labels through `ForgeIconSpec.contentDescription` or each primitive's accessibility parameters.
+Desktop, web, car, and Swift Package Manager distribution are outside the supported scope.
 
-Forms use `ForgeTextField`, a custom `BasicTextField` primitive with Forge-owned validation states, symbol props, colors, borders, helper/error text, and an animated floating hint. Leading and trailing field slots render through `ForgeSymbol`, so they can be plain, styled, or clickable. When a field has no explicit label, its placeholder can become the floating top-left hint.
+## Installation
 
-The first app surface is `ForgeKitDemo`, a useful kit workspace rather than a throwaway demo:
-
-- `:forge-kit-demo`: shared Compose Multiplatform UI and iOS framework.
-- `:forge-kit-demo-android`: Android launcher app for the shared demo UI.
-- `iosApp`: lightweight SwiftUI host example for the generated iOS framework.
-
-## Package Direction
-
-Apps should use `com.star.{appname}`.
-
-Shared library code should stay under `com.star.forge.*`:
-
-- `com.star.forge.kit` for UI primitives and theme.
-- `com.star.forge.sdk` for future app-facing SDK modules.
-- `com.star.forge.toolkit` only if a future module needs developer tools rather than app UI.
-
-## Example
+Forge `0.1.0` is published to GitHub Packages. GitHub requires authentication when downloading
+public packages, so provide a classic personal access token with `read:packages` through Gradle
+properties or environment variables:
 
 ```kotlin
-ForgeKitTheme(
-    spacing = ForgeSpacing(md = 18.dp),
-    radii = ForgeRadii(md = 14.dp),
-) {
-    ForgeButton(onClick = {}) {
-        ForgeText("Continue")
+repositories {
+    google()
+    maven {
+        url = uri("https://maven.pkg.github.com/utkuberaty/Forge")
+        credentials {
+            username = providers.gradleProperty("gpr.user").orNull ?: System.getenv("GITHUB_ACTOR")
+            password = providers.gradleProperty("gpr.key").orNull ?: System.getenv("GITHUB_TOKEN")
+        }
     }
+}
+
+commonMain.dependencies {
+    implementation("io.github.utkuberaty:forge-kit:0.1.0")
 }
 ```
 
-## Build
+During development, publish `0.1.0-SNAPSHOT` locally with `./gradlew :forge:publishToMavenLocal`.
+
+## Typed personalization
+
+Forge separates foundation tokens, semantic roles, and component tokens. A direct component
+argument has highest priority, followed by a component override, a semantic/foundation token, and
+the Forge default.
+
+```kotlin
+val defaults = ForgeTokenSets.default()
+val brand = ForgeTokenSet(
+    light = defaults.light.copy(
+        colors = defaults.light.colors.copy(primary = Color(0xFF7B2CBF)),
+        spacing = defaults.light.spacing.copy(md = 18.dp),
+    ),
+    dark = defaults.dark.copy(
+        colors = defaults.dark.colors.copy(primary = Color(0xFFD8B4FE)),
+    ),
+)
+
+ForgeKitTheme(tokenSet = brand) {
+    ForgeButton(onClick = {}) { ForgeText("Continue") }
+}
+```
+
+Token objects are immutable and can be stored in Compose state for live theme switching. Forge
+does not use JSON token loading, mutable global themes, or a built-in visual token editor.
+
+## Components
+
+Forge includes buttons, icon buttons, symbols, text, images, surfaces, dividers, fields,
+checkboxes, switches, sliders, progress indicators, radio buttons, selection rows, and segmented
+controls. Interactive visuals may be compact, but every touch target is at least 48dp.
+
+The shared showcase under `:forge-kit-demo` renders the same registry on Android and iOS and
+includes default/personalized brands, light/dark modes, RTL, long content, state examples, and an
+event log.
+
+## Validation
 
 ```bash
-./gradlew :forge:assemble
+./gradlew ktlintCheck :forge-visual-tests:lintDebug :forge-kit-demo-android:lintDebug
+./gradlew :forge:verifyPrimitiveTokens :forge:check :forge:checkKotlinAbi
+./gradlew :forge-visual-tests:verifyRoborazziDebug
 ./gradlew :forge-kit-demo-android:assembleDebug
 ./gradlew :forge-kit-demo:linkDebugFrameworkIosSimulatorArm64
+python3 scripts/check_ai_guidance.py
 ```
 
-## IDE Setup
+The standalone `consumer-fixture` is intentionally outside the main build. CI publishes Forge to
+an isolated Maven repository, then compiles that fixture using only the public coordinates.
 
-Open the repository root, not an individual module, in Android Studio.
+## Release
 
-Install the JetBrains Kotlin Multiplatform IDE plugin in Android Studio. It adds KMP project discovery, environment checks, Android and iOS run configurations, Compose Multiplatform support, and basic Swift navigation/debugging.
+Publishing a GitHub Release tagged `v<version>` validates Android/iOS builds, tests, ABI, AI
+guidance, screenshots, and isolated package consumption before publishing all KMP artifacts to
+GitHub Packages. The workflow uses the repository-scoped `GITHUB_TOKEN`; no package token is
+committed. Maven Central publication runs additionally when its credentials and PGP material are
+available as GitHub Actions secrets.
 
-Forge currently uses:
-
-- Android Gradle plugin `9.3.0-rc01`
-- Gradle wrapper `9.6.1`
-- Kotlin `2.4.0`
-- Compose Multiplatform `1.11.1`
-- Android compile/target SDK `37`
-
-The `AndroidArtifact.getPrivacySandboxSdkInfo()` sync error is an Android Studio and AGP tooling-model mismatch. The Gradle wrapper was already new enough, so the project uses the published AGP 9.3 preview line while the final 9.3 artifact is not yet available from Google Maven.
-
-Useful sync checks:
-
-```bash
-./gradlew prepareKotlinIdeaImport :forge:buildKotlinToolingMetadata :forge-kit-demo:buildKotlinToolingMetadata
-./gradlew :forge:assemble :forge-kit-demo-android:assembleDebug :forge-kit-demo:linkDebugFrameworkIosSimulatorArm64
-```
+See [CONTRIBUTING.md](CONTRIBUTING.md), [CHANGELOG.md](CHANGELOG.md), and
+[the roadmap](docs/roadmap.md). Forge is licensed under Apache License 2.0.

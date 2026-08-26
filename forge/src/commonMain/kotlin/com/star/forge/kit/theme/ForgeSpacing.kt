@@ -11,34 +11,25 @@ import androidx.compose.ui.unit.dp
  * spacious interface while keeping the same token names.
  */
 @Immutable
-data class ForgeSpacing(
+public data class ForgeSpacing(
     /** No spacing. Useful when a primitive needs to explicitly remove a gap. */
-    val zero: Dp = 0.dp,
-
+    public val zero: Dp = 0.dp,
     /** Tiny optical adjustment, usually between an icon and a nearby edge. */
-    val nano: Dp = 2.dp,
-
+    public val nano: Dp = 2.dp,
     /** Smallest normal gap for compact controls. */
-    val xxs: Dp = 4.dp,
-
+    public val xxs: Dp = 4.dp,
     /** Tight gap between related inline elements. */
-    val xs: Dp = 8.dp,
-
+    public val xs: Dp = 8.dp,
     /** Small gap inside compact rows, fields, and buttons. */
-    val sm: Dp = 12.dp,
-
+    public val sm: Dp = 12.dp,
     /** Default content padding and spacing between close groups. */
-    val md: Dp = 16.dp,
-
+    public val md: Dp = 16.dp,
     /** Comfortable gap between independent elements in a screen section. */
-    val lg: Dp = 24.dp,
-
+    public val lg: Dp = 24.dp,
     /** Large section gap. */
-    val xl: Dp = 32.dp,
-
+    public val xl: Dp = 32.dp,
     /** Extra-large page or panel gap. */
-    val xxl: Dp = 48.dp,
-
+    public val xxl: Dp = 48.dp,
     /** Largest standard gap for strong separation between page areas. */
-    val xxxl: Dp = 64.dp,
+    public val xxxl: Dp = 64.dp,
 )

@@ -18,3 +18,4 @@ rootProject.name = "Forge"
 include(":forge")
 include(":forge-kit-demo")
 include(":forge-kit-demo-android")
+include(":forge-visual-tests")

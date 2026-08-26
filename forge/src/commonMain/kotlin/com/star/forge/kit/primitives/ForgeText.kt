@@ -19,7 +19,7 @@ import com.star.forge.kit.theme.ForgeTheme
  * tokens, not Material text.
  */
 @Composable
-fun ForgeText(
+public fun ForgeText(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,
@@ -31,14 +31,17 @@ fun ForgeText(
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
 ) {
+    require(minLines > 0) { "minLines must be positive" }
+    require(maxLines >= minLines) { "maxLines must be greater than or equal to minLines" }
     BasicText(
         text = text,
         modifier = modifier,
-        style = style.withForgeOverrides(
-            color = color,
-            fontWeight = fontWeight,
-            textAlign = textAlign,
-        ),
+        style =
+            style.withForgeOverrides(
+                color = color,
+                fontWeight = fontWeight,
+                textAlign = textAlign,
+            ),
         overflow = overflow,
         softWrap = softWrap,
         maxLines = maxLines,
@@ -53,7 +56,7 @@ fun ForgeText(
  * styling.
  */
 @Composable
-fun ForgeText(
+public fun ForgeText(
     text: AnnotatedString,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,
@@ -65,14 +68,17 @@ fun ForgeText(
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
 ) {
+    require(minLines > 0) { "minLines must be positive" }
+    require(maxLines >= minLines) { "maxLines must be greater than or equal to minLines" }
     BasicText(
         text = text,
         modifier = modifier,
-        style = style.withForgeOverrides(
-            color = color,
-            fontWeight = fontWeight,
-            textAlign = textAlign,
-        ),
+        style =
+            style.withForgeOverrides(
+                color = color,
+                fontWeight = fontWeight,
+                textAlign = textAlign,
+            ),
         overflow = overflow,
         softWrap = softWrap,
         maxLines = maxLines,
@@ -86,12 +92,13 @@ private fun TextStyle.withForgeOverrides(
     fontWeight: FontWeight?,
     textAlign: TextAlign?,
 ): TextStyle {
-    val colorAndWeight = merge(
-        TextStyle(
-            color = if (color.isSpecified) color else ForgeTheme.contentColor,
-            fontWeight = fontWeight,
+    val colorAndWeight =
+        merge(
+            TextStyle(
+                color = if (color.isSpecified) color else ForgeTheme.contentColor,
+                fontWeight = fontWeight,
+            ),
         )
-    )
 
     return if (textAlign == null) {
         colorAndWeight

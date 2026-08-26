@@ -14,11 +14,11 @@ import androidx.compose.ui.layout.ContentScale
  * image usage stays explicit and easy to standardize across apps.
  */
 @Immutable
-data class ForgeImageSpec(
-    val painter: Painter,
-    val contentDescription: String? = null,
-    val contentScale: ContentScale = ContentScale.Crop,
-    val alpha: Float = 1f,
+public data class ForgeImageSpec(
+    public val painter: Painter,
+    public val contentDescription: String? = null,
+    public val contentScale: ContentScale = ContentScale.Crop,
+    public val alpha: Float = 1f,
 )
 
 /**
@@ -27,10 +27,11 @@ data class ForgeImageSpec(
  * This wraps the low-level Compose [Image] primitive, not a Material component.
  */
 @Composable
-fun ForgeImage(
+public fun ForgeImage(
     spec: ForgeImageSpec,
     modifier: Modifier = Modifier,
 ) {
+    require(spec.alpha.isFinite() && spec.alpha in 0f..1f) { "image alpha must be a finite value from 0 to 1" }
     Image(
         painter = spec.painter,
         contentDescription = spec.contentDescription,

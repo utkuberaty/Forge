@@ -2,6 +2,8 @@ package com.star.forgekitdemo
 
 import androidx.compose.ui.window.ComposeUIViewController
 
-fun MainViewController() = ComposeUIViewController {
-    ForgeKitDemoApp()
-}
+@Suppress("FunctionName") // Exported Swift factory follows UIKit naming conventions.
+fun MainViewController() =
+    ComposeUIViewController {
+        ForgeKitDemoApp()
+    }

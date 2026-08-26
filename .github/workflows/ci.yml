@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+      - uses: android-actions/setup-android@v3
+      - run: ./gradlew ktlintCheck :forge:verifyPrimitiveTokens :forge:check :forge:checkKotlinAbi :forge:assemble :forge-visual-tests:verifyRoborazziDebug :forge-visual-tests:lintDebug :forge-kit-demo-android:lintDebug :forge-kit-demo-android:assembleDebug --warning-mode fail
+
+  apple:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+      - run: ./gradlew :forge:compileKotlinIosArm64 :forge:iosSimulatorArm64Test :forge-kit-demo:linkDebugFrameworkIosSimulatorArm64
+
+  publication-smoke:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+      - uses: android-actions/setup-android@v3
+      - name: Publish to isolated repository and consume only Maven coordinates
+        run: |
+          smoke_repo="$(mktemp -d)"
+          ./gradlew :forge:publishAllPublicationsToSmokeRepository -PforgeSmokeRepository="$smoke_repo"
+          FORGE_TEST_REPOSITORY="$smoke_repo" FORGE_TEST_VERSION="0.1.0-SNAPSHOT" \
+            ./gradlew -p consumer-fixture :consumer:compileAndroidMain :consumer:linkDebugFrameworkIosSimulatorArm64
+          ! grep -R 'project(":forge")' consumer-fixture
+
+  ai-guidance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python scripts/check_ai_guidance.py
