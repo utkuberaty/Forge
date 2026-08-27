@@ -72,4 +72,5 @@ release event is not delivered, manually dispatch `release.yml` with the existin
 the workflow checks out that immutable tag. The manually dispatched workflow supplies its memory
 limits on the command line so an older immutable tag receives the current release-runner fix.
 Empty CI signing variables must not activate publication signing; signing requires a nonblank PGP
-key.
+key. Central credentials and signing variables are scoped only to the conditional Maven Central
+step, so smoke and GitHub Packages publication never see them.

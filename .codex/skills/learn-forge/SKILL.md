@@ -30,7 +30,7 @@ and release maintainers.
    Release tags publish through GitHub Actions to GitHub Packages; never put package credentials
    in repository files. If release-event delivery fails, dispatch `release.yml` with the existing
    release version so it checks out the immutable tag. Treat empty signing variables as absent;
-   only a nonblank PGP key enables signing.
+   only a nonblank PGP key enables signing, and expose it only to the Maven Central step.
 
 ## Invariants
 
