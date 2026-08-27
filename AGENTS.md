@@ -48,6 +48,10 @@ Use the narrowest relevant command, then run the release checks before publishin
 python3 scripts/check_ai_guidance.py
 ```
 
+CI gives Gradle a 3 GiB heap, 1 GiB Metaspace, and at most two workers. Gradle-heavy CI phases
+use `--no-daemon` so Android, Apple, and publication checks do not retain idle daemons between
+invocations. Linux validates platform-independent and Android work; macOS validates and links iOS.
+
 Validate the repository skill with:
 
 ```bash
@@ -65,4 +69,5 @@ GitHub Releases tagged `v<version>` publish immutable KMP artifacts to GitHub Pa
 workflow `GITHUB_TOKEN`. Never commit package, Maven Central, or signing credentials. Maven Central
 publishing is optional until the namespace, credentials, and signing key are configured. If a
 release event is not delivered, manually dispatch `release.yml` with the existing tag's version;
-the workflow checks out that immutable tag.
+the workflow checks out that immutable tag. The manually dispatched workflow supplies its memory
+limits on the command line so an older immutable tag receives the current release-runner fix.

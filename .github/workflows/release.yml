@@ -18,6 +18,7 @@ jobs:
   publish:
     if: github.event_name == 'workflow_dispatch' || startsWith(github.event.release.tag_name, 'v')
     runs-on: macos-latest
+    timeout-minutes: 90
     env:
       GITHUB_ACTOR: ${{ github.actor }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -25,6 +26,7 @@ jobs:
       ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
       ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_IN_MEMORY_KEY }}
       ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_IN_MEMORY_KEY_PASSWORD }}
+      GRADLE_JVM_ARGS: -Xmx3g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8
     steps:
       - uses: actions/checkout@v4
         with:
@@ -50,27 +52,48 @@ jobs:
           [[ "$version" != *-SNAPSHOT ]]
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
-      - name: Validate all release gates
+      - name: Validate formatting, tokens, and API
         run: |
-          ./gradlew ktlintCheck :forge:verifyPrimitiveTokens :forge:check :forge:checkKotlinAbi :forge:assemble \
+          ./gradlew ktlintCheck :forge:verifyPrimitiveTokens :forge:checkKotlinAbi \
+            -PVERSION_NAME=${{ steps.version.outputs.version }} --warning-mode fail --no-daemon \
+            -Dorg.gradle.jvmargs="$GRADLE_JVM_ARGS" --max-workers=2
+      - name: Validate Android release gates
+        run: |
+          ./gradlew :forge:testAndroidHostTest :forge:lintAnalyzeAndroidHostTest \
+            :forge:assembleAndroidMain \
             :forge-visual-tests:verifyRoborazziDebug :forge-kit-demo-android:assembleDebug \
             :forge-visual-tests:lintDebug :forge-kit-demo-android:lintDebug \
-            :forge:compileKotlinIosArm64 :forge:iosSimulatorArm64Test \
+            -PVERSION_NAME=${{ steps.version.outputs.version }} --warning-mode fail --no-daemon \
+            -Dorg.gradle.jvmargs="$GRADLE_JVM_ARGS" --max-workers=2
+      - name: Validate Apple release gates
+        run: |
+          ./gradlew :forge:compileKotlinIosArm64 :forge:iosSimulatorArm64Test \
             :forge-kit-demo:linkDebugFrameworkIosSimulatorArm64 \
-            -PVERSION_NAME=${{ steps.version.outputs.version }} --warning-mode fail
-          python scripts/check_ai_guidance.py
+            -PVERSION_NAME=${{ steps.version.outputs.version }} --warning-mode fail --no-daemon \
+            -Dorg.gradle.jvmargs="$GRADLE_JVM_ARGS" --max-workers=2
+      - name: Validate AI guidance
+        run: python scripts/check_ai_guidance.py
       - name: Package consumer smoke test
         run: |
           smoke_repo="$(mktemp -d)"
           ./gradlew :forge:publishAllPublicationsToSmokeRepository \
-            -PforgeSmokeRepository="$smoke_repo" -PVERSION_NAME=${{ steps.version.outputs.version }}
+            -PforgeSmokeRepository="$smoke_repo" -PVERSION_NAME=${{ steps.version.outputs.version }} \
+            --no-daemon -Dorg.gradle.jvmargs="$GRADLE_JVM_ARGS" --max-workers=2
           FORGE_TEST_REPOSITORY="$smoke_repo" FORGE_TEST_VERSION=${{ steps.version.outputs.version }} \
-            ./gradlew -p consumer-fixture :consumer:compileAndroidMain :consumer:linkDebugFrameworkIosSimulatorArm64
+            ./gradlew -p consumer-fixture :consumer:compileAndroidMain \
+              :consumer:linkDebugFrameworkIosSimulatorArm64 --no-daemon \
+              -Dorg.gradle.jvmargs="$GRADLE_JVM_ARGS" --max-workers=2
       - name: Publish GitHub Packages
-        run: ./gradlew :forge:publishAllPublicationsToGitHubPackagesRepository -PVERSION_NAME=${{ steps.version.outputs.version }}
+        run: |
+          ./gradlew :forge:publishAllPublicationsToGitHubPackagesRepository \
+            -PVERSION_NAME=${{ steps.version.outputs.version }} --no-daemon \
+            -Dorg.gradle.jvmargs="$GRADLE_JVM_ARGS" --max-workers=2
       - name: Sign, upload, and release Maven Central deployment
         if: ${{ env.ORG_GRADLE_PROJECT_mavenCentralUsername != '' && env.ORG_GRADLE_PROJECT_mavenCentralPassword != '' && env.ORG_GRADLE_PROJECT_signingInMemoryKey != '' }}
-        run: ./gradlew :forge:publishAndReleaseToMavenCentral -PVERSION_NAME=${{ steps.version.outputs.version }}
+        run: |
+          ./gradlew :forge:publishAndReleaseToMavenCentral \
+            -PVERSION_NAME=${{ steps.version.outputs.version }} --no-daemon \
+            -Dorg.gradle.jvmargs="$GRADLE_JVM_ARGS" --max-workers=2
       - name: Attach checksums and changelog
         shell: bash
         env:

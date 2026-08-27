@@ -13,10 +13,15 @@ to an isolated Maven repository, and compile a standalone consumer that resolves
 `io.github.utkuberaty:forge-kit`.
 
 CI commands include `ktlintCheck`, Android `lintDebug` for the visual suite and demo host,
-`:forge:verifyPrimitiveTokens`, `:forge:check`, `:forge:checkKotlinAbi`,
+`:forge:verifyPrimitiveTokens`, `:forge:testAndroidHostTest`, `:forge:checkKotlinAbi`,
 `:forge-visual-tests:verifyRoborazziDebug`, Android demo assembly, iOS compilation/linking, and
 `python3 scripts/check_ai_guidance.py`. The external consumer lives in `consumer-fixture` and must
 never add `project(":forge")`.
+
+CI uses a 3 GiB Gradle heap, 1 GiB Metaspace, at most two workers, and isolated `--no-daemon`
+invocations. Run formatting, token, ABI, Android, and screenshot gates on Linux. Run iOS simulator
+tests/framework linking and the complete KMP publication smoke test on macOS. The release workflow
+passes the same limits explicitly so a manual dispatch can safely build an older immutable tag.
 
 Compose behavior and semantics tests use the common test API and execute on iOS Simulator. Android
 host tests execute the pure token, validation, feedback, and slider suites.
