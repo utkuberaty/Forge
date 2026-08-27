@@ -29,7 +29,8 @@ and release maintainers.
    Gradle memory and worker settings instead of combining every platform in one invocation.
    Release tags publish through GitHub Actions to GitHub Packages; never put package credentials
    in repository files. If release-event delivery fails, dispatch `release.yml` with the existing
-   release version so it checks out the immutable tag.
+   release version so it checks out the immutable tag. Treat empty signing variables as absent;
+   only a nonblank PGP key enables signing.
 
 ## Invariants
 

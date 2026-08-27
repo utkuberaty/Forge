@@ -32,4 +32,5 @@ workflow publishes all KMP artifacts to the GitHub Packages Gradle registry with
 `read:packages`. If the release event is not delivered, manually dispatch `release.yml` with the
 existing tag's version; the workflow checks out that tag before publishing. Maven Central
 publication is also configured and runs only when Central and PGP secrets are present. Credentials
-and signing material are supplied only through CI secrets.
+and signing material are supplied only through CI secrets. Empty secret values do not enable
+signing; `signAllPublications()` is activated only by a nonblank in-memory PGP key.

@@ -71,3 +71,5 @@ publishing is optional until the namespace, credentials, and signing key are con
 release event is not delivered, manually dispatch `release.yml` with the existing tag's version;
 the workflow checks out that immutable tag. The manually dispatched workflow supplies its memory
 limits on the command line so an older immutable tag receives the current release-runner fix.
+Empty CI signing variables must not activate publication signing; signing requires a nonblank PGP
+key.
