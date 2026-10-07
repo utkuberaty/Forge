@@ -92,7 +92,7 @@ System inset handling should go through Forge helpers:
 - `Modifier.forgeImePadding()` for content that must move above the on-screen keyboard. Place it before scroll modifiers.
 - `Modifier.forgeSystemPadding(...)` when a screen needs a specific inset group such as status bars, navigation bars, safe content, or safe gestures.
 
-Android demo activities should call `enableEdgeToEdge()` and use `android:windowSoftInputMode="adjustResize"` when text input is present.
+Android demo activities should call `enableEdgeToEdge()` and use `android:windowSoftInputMode="adjustResize"` when text input is present. Hosts using a platform `Theme.Light.NoTitleBar` theme must set `android:windowDrawsSystemBarBackgrounds = true` so transparent bars and the automatic icon colors can match the Compose background.
 
 ## Design Style
 
