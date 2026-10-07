@@ -53,6 +53,7 @@ Use the narrowest relevant command, then run the release checks before publishin
 python3 scripts/check_ai_guidance.py
 ```
 
+Android SDK setup must explicitly request `platform-tools`, excluding the retired `tools` package.
 CI gives Gradle a 3 GiB heap, 1 GiB Metaspace, and at most two workers. Gradle-heavy CI phases
 use `--no-daemon` so Android, Apple, and publication checks do not retain idle daemons between
 invocations. Linux validates platform-independent and Android work; macOS validates and links iOS.

@@ -20,6 +20,8 @@ jobs:
           java-version: 17
           cache: gradle
       - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
       - name: Formatting, token, and API checks
         run: ./gradlew ktlintCheck :forge:verifyPrimitiveTokens :forge:checkKotlinAbi --warning-mode fail --no-daemon
       - name: Android tests, lint, visual regression, and assembly
@@ -58,6 +60,8 @@ jobs:
           java-version: 17
           cache: gradle
       - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
       - name: Publish to isolated repository and consume only Maven coordinates
         run: |
           smoke_repo="$(mktemp -d)"

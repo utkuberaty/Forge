@@ -18,6 +18,9 @@ CI commands include `ktlintCheck`, Android `lintDebug` for the visual suite and 
 `python3 scripts/check_ai_guidance.py`. The external consumer lives in `consumer-fixture` and must
 never add `project(":forge")`.
 
+CI and release Android SDK setup explicitly install `platform-tools`; the removed `tools`
+package must not be requested.
+
 CI uses a 3 GiB Gradle heap, 1 GiB Metaspace, at most two workers, and isolated `--no-daemon`
 invocations. Run formatting, token, ABI, Android, and screenshot gates on Linux. Run iOS simulator
 tests/framework linking and the complete KMP publication smoke test on macOS. The release workflow
