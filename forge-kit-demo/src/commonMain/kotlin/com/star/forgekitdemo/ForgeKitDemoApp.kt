@@ -62,6 +62,9 @@ import com.star.forge.kit.theme.ForgeKitTheme
 import com.star.forge.kit.theme.ForgeRadii
 import com.star.forge.kit.theme.ForgeSpacing
 import com.star.forge.kit.theme.ForgeTheme
+import com.star.forge.kit.components.ForgeCodeBlock
+import com.star.forge.kit.components.ForgeStatusPanel
+import com.star.forge.kit.components.ForgeStatusTone
 import kotlin.math.roundToInt
 
 /**
@@ -190,8 +193,31 @@ private fun ForgeKitDemoContent(
         }
 
         PrimitiveGallery()
+        StatusAndCodeExamples()
         TokenReference()
     }
+}
+
+@Composable
+private fun StatusAndCodeExamples() {
+    var loading by remember { mutableStateOf(false) }
+    ForgeText("Async states and code", style = ForgeTheme.typography.titleLarge)
+    ForgeButton(onClick = { loading = !loading }, variant = ForgeButtonVariant.Outline) {
+        ForgeText(if (loading) "Show empty state" else "Show loading state")
+    }
+    ForgeStatusPanel(
+        title = if (loading) "Loading" else "Nothing here yet",
+        message = "Apps supply the wording; Forge owns the layout, theme, and accessibility.",
+        loading = loading,
+    )
+    ForgeStatusPanel(
+        title = "Request failed",
+        message = "This is an example error state. Retry changes the panel above.",
+        tone = ForgeStatusTone.Error,
+        actionLabel = "Retry example",
+        onAction = { loading = true },
+    )
+    ForgeCodeBlock("ForgeKitTheme {\n    ForgeButton(onClick = {}) {\n        ForgeText(\"Explore\")\n    }\n}")
 }
 
 @Composable

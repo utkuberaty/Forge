@@ -16,5 +16,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "Forge"
 include(":forge")
+include(":forge-github")
 include(":forge-kit-demo")
 include(":forge-kit-demo-android")

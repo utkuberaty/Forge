@@ -6,10 +6,15 @@
 
 Forge is the shared Kotlin foundation for `com.star.*` apps and SDKs.
 
-The first module is `:forge`, published under the package family `com.star.forge.*`. It is a Compose Multiplatform library for Android and iOS. Its UI kit lives under `com.star.forge.kit` and currently contains only:
+The first module is `:forge`, published under the package family `com.star.forge.*`. It is a Compose Multiplatform library for Android and iOS. Its UI kit lives under `com.star.forge.kit` and currently includes:
 
 - `com.star.forge.kit.theme`: configurable spacing, radii, borders, colors, typography, and `ForgeKitTheme`.
 - `com.star.forge.kit.primitives`: Forge-owned primitives for buttons, icon buttons, icons, symbols, images, checkboxes, switches, sliders, surfaces, text, text fields, and dividers.
+- `com.star.forge.kit.components`: shared status panels for loading/empty/error states and selectable code blocks.
+
+The optional `:forge-github` module exposes `com.star.forge.sdk.github`: a read-only GitHub REST client, typed repository/release models, pagination, and rate-limit errors. It supports Android, iOS, and JVM without adding networking dependencies to `:forge`. See [GitHub SDK](docs/forge-github.md).
+
+[RepoScout](https://github.com/utkuberaty/RepoScout) is a separate educational app using these public Forge APIs. It searches GitHub repositories, reads releases, and teaches Android, KMP, and Forge through the running example.
 
 Forge primitives should be custom first. We do not use Material buttons, icon buttons, checkboxes, switches, sliders, text fields, surfaces, text, symbols, or dividers.
 

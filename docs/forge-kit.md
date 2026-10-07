@@ -70,6 +70,16 @@ Forms should use Forge primitives for structure and input state:
 - `ForgeTextFieldState` communicates default, success, warning, and error states without Material defaults.
 - Field hints animate: when a field is focused or has a value, `label` floats to the top-left. If `label` is not provided, `placeholder` becomes the floating hint instead.
 
+## Shared Components and Progress
+
+Reusable app capabilities should use the public `com.star.forge.kit.components` APIs:
+
+- `ForgeStatusPanel(title, message, loading, tone, actionLabel, onAction)` composes Forge surfaces, text, and buttons for loading, empty, or failure states. Callers supply all product wording. Supply `actionLabel` and `onAction` together. A polite live region announces changes.
+- `ForgeCodeBlock(code)` displays selectable monospace text with horizontal scrolling. It never executes or interprets supplied code.
+- `ForgeProgressIndicator` is a Forge-owned indeterminate primitive with progress accessibility semantics and an optional label. The default size is 24 dp; callers can size it with a modifier.
+
+ForgeKitDemo's “Async states and code” section shows loading, empty, retry, and code examples, and inherits the workspace's theme and spacing controls. RepoScout uses these same public components for GitHub requests and its Learn lessons.
+
 ## System Paddings
 
 System inset handling should go through Forge helpers:
