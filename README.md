@@ -14,7 +14,6 @@ The first module is `:forge`, published under the package family `com.star.forge
 
 The optional `:forge-github` module exposes `com.star.forge.sdk.github`: a read-only GitHub REST client, typed repository/release models, pagination, and rate-limit errors. It supports Android, iOS, and JVM without adding networking dependencies to `:forge`. See [GitHub SDK](docs/forge-github.md).
 
-[RepoScout](https://github.com/utkuberaty/RepoScout) is a separate educational app using these public Forge APIs. It searches GitHub repositories, reads releases, and teaches Android, KMP, and Forge through the running example.
 
 Forge primitives should be custom first. We do not use Material buttons, icon buttons, checkboxes, switches, sliders, text fields, surfaces, text, symbols, or dividers.
 

@@ -62,6 +62,10 @@ import com.star.forge.kit.theme.ForgeKitTheme
 import com.star.forge.kit.theme.ForgeRadii
 import com.star.forge.kit.theme.ForgeSpacing
 import com.star.forge.kit.theme.ForgeTheme
+import com.star.forge.kit.components.ForgeBadge
+import com.star.forge.kit.components.ForgeBadgeTone
+import com.star.forge.kit.components.ForgeNavigationBar
+import com.star.forge.kit.components.ForgeNavigationItem
 import com.star.forge.kit.components.ForgeCodeBlock
 import com.star.forge.kit.components.ForgeStatusPanel
 import com.star.forge.kit.components.ForgeStatusTone
@@ -194,6 +198,7 @@ private fun ForgeKitDemoContent(
 
         PrimitiveGallery()
         StatusAndCodeExamples()
+        NavigationAndCardExamples()
         TokenReference()
     }
 }
@@ -218,6 +223,41 @@ private fun StatusAndCodeExamples() {
         onAction = { loading = true },
     )
     ForgeCodeBlock("ForgeKitTheme {\n    ForgeButton(onClick = {}) {\n        ForgeText(\"Explore\")\n    }\n}")
+}
+
+@Composable
+private fun NavigationAndCardExamples() {
+    var selected by remember { mutableStateOf(0) }
+    var opened by remember { mutableStateOf(false) }
+    var search by remember { mutableStateOf("") }
+    ForgeText("Navigation, metadata, and cards", style = ForgeTheme.typography.titleLarge)
+    ForgeNavigationBar(
+        items = listOf(
+            ForgeNavigationItem("Workspace", ForgeIconSpec.vector(DemoIcons.ForgeMark)),
+            ForgeNavigationItem("Reference", ForgeIconSpec.vector(DemoIcons.Info)),
+        ),
+        selectedIndex = selected,
+        onSelect = { selected = it },
+    )
+    ForgeTextField(
+        value = search, onValueChange = { search = it }, placeholder = "Search workspace",
+        accessibilityLabel = "Workspace search", floatingLabelEnabled = false,
+        modifier = Modifier.fillMaxWidth(),
+    )
+    ForgeSurface(
+        onClick = { opened = !opened }, modifier = Modifier.fillMaxWidth(),
+        accessibilityLabel = "Toggle example card", color = ForgeTheme.colors.surfaceRaised,
+    ) {
+        Column(Modifier.padding(ForgeTheme.spacing.md), verticalArrangement = Arrangement.spacedBy(ForgeTheme.spacing.sm)) {
+            ForgeText(if (opened) "Card opened" else "Open this card", style = ForgeTheme.typography.titleMedium)
+            Row(horizontalArrangement = Arrangement.spacedBy(ForgeTheme.spacing.xs)) {
+                ForgeBadge("Metadata")
+                ForgeBadge("Selected", tone = ForgeBadgeTone.Primary)
+                ForgeBadge("Ready", tone = ForgeBadgeTone.Success)
+            }
+            ForgeText("One action per interactive surface. Place additional buttons outside it.", style = ForgeTheme.typography.bodySmall)
+        }
+    }
 }
 
 @Composable

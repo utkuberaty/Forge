@@ -68,7 +68,7 @@ Forms should use Forge primitives for structure and input state:
 - `ForgeTextField` is a custom `BasicTextField` primitive with Forge colors, typography, radii, borders, cursor, validation state, helper/error text, and symbol slots.
 - `ForgeTextFieldIcon` passes a `ForgeIconSpec` into leading or trailing field slots and renders it through `ForgeSymbol`, so callers can control symbol size, shape, background variant, colors, enabled state, and click behavior.
 - `ForgeTextFieldState` communicates default, success, warning, and error states without Material defaults.
-- Field hints animate: when a field is focused or has a value, `label` floats to the top-left. If `label` is not provided, `placeholder` becomes the floating hint instead.
+- Field hints animate: when a field is focused or has a value, `label` floats to the top-left. If `label` is not provided, `placeholder` becomes the floating hint instead. Set `floatingLabelEnabled = false` for compact search fields; retain an `accessibilityLabel` when the hint disappears.
 
 ## Shared Components and Progress
 
@@ -78,7 +78,11 @@ Reusable app capabilities should use the public `com.star.forge.kit.components` 
 - `ForgeCodeBlock(code)` displays selectable monospace text with horizontal scrolling. It never executes or interprets supplied code.
 - `ForgeProgressIndicator` is a Forge-owned indeterminate primitive with progress accessibility semantics and an optional label. The default size is 24 dp; callers can size it with a modifier.
 
-ForgeKitDemo's “Async states and code” section shows loading, empty, retry, and code examples, and inherits the workspace's theme and spacing controls. RepoScout uses these same public components for GitHub requests and its Learn lessons.
+- `ForgeBadge(label, tone)` displays non-interactive metadata with neutral, primary, or success treatments.
+- `ForgeNavigationBar(items, selectedIndex, onSelect)` provides tab roles, selection and disabled semantics, explicit active styling, and 48 dp touch targets. Apps supply labels/icons and own navigation and system insets.
+- `ForgeSurface(onClick, ...)` makes a card or row one button-like action with pressed feedback and disabled semantics. Keep nested actions outside the interactive surface and supply a meaningful accessibility label when needed.
+
+ForgeKitDemo includes async states, code, compact fields, metadata, clickable cards, and navigation examples. They inherit the workspace's theme and spacing controls.
 
 ## System Paddings
 

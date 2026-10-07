@@ -3,13 +3,22 @@ package com.star.forge.kit.primitives
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.disabled
+import androidx.compose.ui.semantics.semantics
 import com.star.forge.kit.theme.LocalForgeContentColor
 import com.star.forge.kit.theme.ForgeTheme
 
@@ -41,4 +50,43 @@ fun ForgeSurface(
             content()
         }
     }
+}
+
+/**
+ * Interactive surface for cards and rows with one primary action. Exposes button
+ * and disabled semantics, clips interaction to [shape], and uses [pressedColor]
+ * for feedback. Keep nested actions outside this surface.
+ */
+@Composable
+fun ForgeSurface(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    shape: Shape = ForgeTheme.shapes.medium,
+    color: Color = ForgeTheme.colors.surface,
+    contentColor: Color = ForgeTheme.colors.onSurface,
+    border: BorderStroke? = BorderStroke(ForgeTheme.borders.thin, ForgeTheme.colors.border),
+    pressedColor: Color = ForgeTheme.colors.surfaceVariant,
+    accessibilityLabel: String? = null,
+    content: @Composable () -> Unit,
+) {
+    val interactions = remember { MutableInteractionSource() }
+    val pressed by interactions.collectIsPressedAsState()
+    ForgeSurface(
+        modifier = modifier.clip(shape).clickable(
+            interactionSource = interactions,
+            indication = null,
+            enabled = enabled,
+            role = Role.Button,
+            onClick = onClick,
+        ).semantics(mergeDescendants = true) {
+            if (accessibilityLabel != null) contentDescription = accessibilityLabel
+            if (!enabled) disabled()
+        },
+        shape = shape,
+        color = if (pressed && enabled) pressedColor else color,
+        contentColor = if (enabled) contentColor else contentColor.copy(alpha = 0.38f),
+        border = border,
+        content = content,
+    )
 }

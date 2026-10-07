@@ -4,7 +4,7 @@
 
 ## Consume from another repository
 
-Forge's source is public. These modules are not currently published to Maven Central; RepoScout uses a Gradle composite build with explicit substitutions:
+Forge's source is public. These modules are not currently published to Maven Central; apps can use a Gradle composite build with explicit substitutions:
 
 ```kotlin
 includeBuild("../Forge") {
@@ -49,4 +49,4 @@ There is no automatic retry. Public unauthenticated requests have GitHub rate li
 ./gradlew :forge-github:assembleAndroidMain :forge-github:compileKotlinIosSimulatorArm64
 ```
 
-MockEngine tests cover encoded qualifiers and pagination, nullable/unknown fields, release parsing, empty releases, HTTP errors, rate limits, input validation, cancellation, and injected-client ownership. [RepoScout](https://github.com/utkuberaty/RepoScout) demonstrates real calls and shared UI on Android and iOS.
+MockEngine tests cover encoded qualifiers and pagination, nullable/unknown fields, release parsing, empty releases, HTTP errors, rate limits, input validation, cancellation, and injected-client ownership.

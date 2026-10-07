@@ -200,6 +200,8 @@ object ForgeTextFieldDefaults {
  * [placeholder], so visual field names are also exposed to accessibility.
  * @param accessibilityStateDescription optional spoken state for custom app
  * wording. Forge derives one from validation/read-only state when omitted.
+ * @param floatingLabelEnabled whether the hint floats above the input. Disable
+ * for compact search/tool fields; the accessibility label is preserved.
  */
 @Composable
 fun ForgeTextField(
@@ -224,6 +226,7 @@ fun ForgeTextField(
     visualTransformation: VisualTransformation = VisualTransformation.None,
     accessibilityLabel: String? = label ?: placeholder,
     accessibilityStateDescription: String? = null,
+    floatingLabelEnabled: Boolean = true,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val focused by interactionSource.collectIsFocusedAsState()
@@ -232,7 +235,7 @@ fun ForgeTextField(
         else -> state
     }
     val floatingText = label ?: placeholder
-    val shouldFloat = floatingText != null && (focused || value.isNotEmpty())
+    val shouldFloat = floatingLabelEnabled && floatingText != null && (focused || value.isNotEmpty())
     val message = errorText ?: supportingText
     val fieldStateDescription = accessibilityStateDescription ?: effectiveState.accessibilityDescription(readOnly)
 
