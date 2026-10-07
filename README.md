@@ -10,16 +10,15 @@ The first module is `:forge`, published under the package family `com.star.forge
 
 - `com.star.forge.kit.theme`: configurable spacing, radii, borders, colors, typography, and `ForgeKitTheme`.
 - `com.star.forge.kit.primitives`: Forge-owned primitives for buttons, icon buttons, icons, symbols, images, checkboxes, switches, sliders, surfaces, text, text fields, and dividers.
-- `com.star.forge.kit.components`: shared status panels for loading/empty/error states and selectable code blocks.
+- `com.star.forge.kit.components`: shared status panels for loading/empty/error states, selectable code blocks, metadata badges, and navigation bars.
 
 The optional `:forge-github` module exposes `com.star.forge.sdk.github`: a read-only GitHub REST client, typed repository/release models, pagination, and rate-limit errors. It supports Android, iOS, and JVM without adding networking dependencies to `:forge`. See [GitHub SDK](docs/forge-github.md).
-
 
 Forge primitives should be custom first. We do not use Material buttons, icon buttons, checkboxes, switches, sliders, text fields, surfaces, text, symbols, or dividers.
 
 Accessibility is part of the primitive API. Interactive primitives expose roles, disabled states, labels where needed, text field validation semantics, and slider range/set-progress semantics. Apps should still provide product-specific labels through `ForgeIconSpec.contentDescription` or each primitive's accessibility parameters.
 
-Forms use `ForgeTextField`, a custom `BasicTextField` primitive with Forge-owned validation states, symbol props, colors, borders, helper/error text, and an animated floating hint. Leading and trailing field slots render through `ForgeSymbol`, so they can be plain, styled, or clickable. When a field has no explicit label, its placeholder can become the floating top-left hint.
+Forms use `ForgeTextField`, a custom `BasicTextField` primitive with Forge-owned validation states, symbol props, colors, borders, helper/error text, and an animated floating hint. Leading and trailing field slots render through `ForgeSymbol`, so they can be plain, styled, or clickable. When a field has no explicit label, its placeholder can become the floating top-left hint. Compact searches can opt out with `floatingLabelEnabled = false` while retaining an accessibility label. Clickable `ForgeSurface` cards provide pressed feedback and button semantics.
 
 The first app surface is `ForgeKitDemo`, a useful kit workspace rather than a throwaway demo:
 
