@@ -59,26 +59,39 @@ class GitHubClient private constructor(
         if (ownsClient) httpClient.close()
     }
 
-    private suspend fun request(path: String, page: Int, pageSize: Int, query: String? = null): String {
-        val response = httpClient.get("https://api.github.com/$path") {
-            // Return error responses to this client even if the injected HttpClient expects success.
-            expectSuccess = false
-            header("Accept", "application/vnd.github+json")
-            header("X-GitHub-Api-Version", "2026-03-10")
-            header("User-Agent", "Forge-GitHub/0.1")
-            parameter("page", page)
-            parameter("per_page", pageSize)
-            if (query != null) parameter("q", query)
-        }
+    private suspend fun request(
+        path: String,
+        page: Int,
+        pageSize: Int,
+        query: String? = null,
+    ): String {
+        val response =
+            httpClient.get("https://api.github.com/$path") {
+                // Return error responses to this client even if the injected HttpClient expects success.
+                expectSuccess = false
+                header("Accept", "application/vnd.github+json")
+                header("X-GitHub-Api-Version", "2026-03-10")
+                header("User-Agent", "Forge-GitHub/0.1")
+                parameter("page", page)
+                parameter("per_page", pageSize)
+                if (query != null) parameter("q", query)
+            }
         val body = response.bodyAsText()
         if (response.status.value !in 200..299) {
-            val message = runCatching { json.decodeFromString<ErrorResponse>(body).message }
-                .getOrNull() ?: "GitHub request failed (${response.status.value})."
+            val message =
+                runCatching { json.decodeFromString<ErrorResponse>(body).message }
+                    .getOrNull() ?: "GitHub request failed (${response.status.value})."
             val retryAfter = response.headers["Retry-After"]?.toLongOrNull()
-            val rateLimited = response.status.value == 429 ||
-                (response.status.value == 403 &&
-                    (response.headers["X-RateLimit-Remaining"] == "0" || retryAfter != null ||
-                        message.contains("rate limit", ignoreCase = true)))
+            val rateLimited =
+                response.status.value == 429 ||
+                    (
+                        response.status.value == 403 &&
+                            (
+                                response.headers["X-RateLimit-Remaining"] == "0" ||
+                                    retryAfter != null ||
+                                    message.contains("rate limit", ignoreCase = true)
+                            )
+                    )
             throw GitHubApiException(
                 statusCode = response.status.value,
                 message = message,
@@ -90,13 +103,18 @@ class GitHubClient private constructor(
         return body
     }
 
-    private fun validatePage(page: Int, pageSize: Int) {
+    private fun validatePage(
+        page: Int,
+        pageSize: Int,
+    ) {
         require(page > 0) { "Page must be positive." }
         require(pageSize in 1..100) { "Page size must be between 1 and 100." }
     }
 
     @Serializable
-    private data class ErrorResponse(val message: String)
+    private data class ErrorResponse(
+        val message: String,
+    )
 }
 
 internal expect fun createGitHubHttpClient(): HttpClient

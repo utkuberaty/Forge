@@ -7,95 +7,66 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
-internal val LocalForgeColors = staticCompositionLocalOf { ForgeColorSchemes.light() }
+internal val LocalForgeTokens = staticCompositionLocalOf { ForgeTokenSets.light() }
 internal val LocalForgeContentColor = staticCompositionLocalOf { Color.Unspecified }
-internal val LocalForgeSpacing = staticCompositionLocalOf { ForgeSpacing() }
-internal val LocalForgeRadii = staticCompositionLocalOf { ForgeRadii() }
-internal val LocalForgeBorders = staticCompositionLocalOf { ForgeBorders() }
-internal val LocalForgeTypography = staticCompositionLocalOf { ForgeTypography.default }
-internal val LocalForgeShapes = staticCompositionLocalOf { ForgeShapes.from(ForgeRadii()) }
 
-/**
- * Read-only access to the active Forge theme values.
- *
- * Use this inside shared UI and primitives instead of hardcoded spacing,
- * radius, border, type, shape, or color values.
- */
-object ForgeTheme {
-    /** Active Forge-owned color palette. */
-    val colors: ForgeColors
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalForgeColors.current
-
-    /** Active content color for text and icons inside Forge containers. */
-    val contentColor: Color
-        @Composable
-        @ReadOnlyComposable
+public object ForgeTheme {
+    public val tokens: ForgeTokens
+        @Composable @ReadOnlyComposable
+        get() = LocalForgeTokens.current
+    public val colors: ForgeColors
+        @Composable @ReadOnlyComposable
+        get() = tokens.colors
+    public val contentColor: Color
+        @Composable @ReadOnlyComposable
         get() = LocalForgeContentColor.current
-
-    /** Active spacing scale. */
-    val spacing: ForgeSpacing
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalForgeSpacing.current
-
-    /** Active radius scale. */
-    val radii: ForgeRadii
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalForgeRadii.current
-
-    /** Active border width scale. */
-    val borders: ForgeBorders
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalForgeBorders.current
-
-    /** Active Forge-owned typography scale. */
-    val typography: ForgeTypography
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalForgeTypography.current
-
-    /** Active Forge-owned shape scale. */
-    val shapes: ForgeShapes
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalForgeShapes.current
+    public val spacing: ForgeSpacing
+        @Composable @ReadOnlyComposable
+        get() = tokens.spacing
+    public val radii: ForgeRadii
+        @Composable @ReadOnlyComposable
+        get() = tokens.radii
+    public val borders: ForgeBorders
+        @Composable @ReadOnlyComposable
+        get() = tokens.borders
+    public val typography: ForgeTypography
+        @Composable @ReadOnlyComposable
+        get() = tokens.typography
+    public val shapes: ForgeShapes
+        @Composable @ReadOnlyComposable
+        get() = ForgeShapes.from(tokens.radii)
+    public val opacity: ForgeOpacity
+        @Composable @ReadOnlyComposable
+        get() = tokens.opacity
+    public val motion: ForgeMotion
+        @Composable @ReadOnlyComposable
+        get() = tokens.motion
+    public val elevation: ForgeElevation
+        @Composable @ReadOnlyComposable
+        get() = tokens.elevation
+    public val touchTargets: ForgeTouchTargets
+        @Composable @ReadOnlyComposable
+        get() = tokens.touchTargets
+    public val components: ForgeComponentTokens
+        @Composable @ReadOnlyComposable
+        get() = tokens.components
 }
 
-/**
- * Provides the Forge UI kit theme.
- *
- * @param darkTheme whether the dark Forge defaults should be used.
- * @param colors Forge-owned color palette.
- * @param spacing layout spacing scale for Forge primitives.
- * @param radii corner radius scale for Forge primitives.
- * @param borders border width scale for dividers and outlines.
- * @param typography Forge-owned text styles.
- * @param shapes Forge-owned shapes, derived from [radii] by default.
- * @param content themed content.
- */
 @Composable
-fun ForgeKitTheme(
+public fun ForgeKitTheme(
+    tokenSet: ForgeTokenSet = ForgeTokenSets.default(),
     darkTheme: Boolean = isSystemInDarkTheme(),
-    colors: ForgeColors = if (darkTheme) ForgeColorSchemes.dark() else ForgeColorSchemes.light(),
-    spacing: ForgeSpacing = ForgeSpacing(),
-    radii: ForgeRadii = ForgeRadii(),
-    borders: ForgeBorders = ForgeBorders(),
-    typography: ForgeTypography = ForgeTypography.default,
-    shapes: ForgeShapes = ForgeShapes.from(radii),
+    content: @Composable () -> Unit,
+): Unit = ForgeKitTheme(tokens = if (darkTheme) tokenSet.dark else tokenSet.light, content = content)
+
+@Composable
+public fun ForgeKitTheme(
+    tokens: ForgeTokens,
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(
-        LocalForgeColors provides colors,
-        LocalForgeContentColor provides colors.onSurface,
-        LocalForgeSpacing provides spacing,
-        LocalForgeRadii provides radii,
-        LocalForgeBorders provides borders,
-        LocalForgeTypography provides typography,
-        LocalForgeShapes provides shapes,
+        LocalForgeTokens provides tokens,
+        LocalForgeContentColor provides tokens.colors.onSurface,
         content = content,
     )
 }

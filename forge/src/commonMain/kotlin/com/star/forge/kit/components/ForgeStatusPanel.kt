@@ -19,7 +19,7 @@ import com.star.forge.kit.primitives.ForgeText
 import com.star.forge.kit.theme.ForgeTheme
 
 /** Semantic color used by a status panel. Product wording belongs to its caller. */
-enum class ForgeStatusTone { Neutral, Error }
+public enum class ForgeStatusTone { Neutral, Error }
 
 /**
  * A configurable loading, empty, or error panel using Forge primitives and tokens.
@@ -27,7 +27,7 @@ enum class ForgeStatusTone { Neutral, Error }
  * through a polite live region, and [loading] adds indeterminate progress semantics.
  */
 @Composable
-fun ForgeStatusPanel(
+public fun ForgeStatusPanel(
     title: String,
     message: String,
     modifier: Modifier = Modifier,

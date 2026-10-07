@@ -11,6 +11,23 @@ local.properties
 keystore.properties
 .DS_Store
 
+# Local credentials and signing material
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.p8
+*.jks
+*.asc
+*.gpg
+github.properties
+secrets.properties
+credentials.properties
+signing.properties
+
 # Xcode local state
 DerivedData/
 *.xcuserstate

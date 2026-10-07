@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -19,8 +20,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.semantics
-import com.star.forge.kit.theme.LocalForgeContentColor
 import com.star.forge.kit.theme.ForgeTheme
+import com.star.forge.kit.theme.LocalForgeContentColor
 
 /**
  * Forge-owned surface primitive.
@@ -29,23 +30,25 @@ import com.star.forge.kit.theme.ForgeTheme
  * content-color defaults without wrapping Material `Surface`.
  */
 @Composable
-fun ForgeSurface(
+public fun ForgeSurface(
     modifier: Modifier = Modifier,
     shape: Shape = ForgeTheme.shapes.medium,
     color: Color = ForgeTheme.colors.surface,
     contentColor: Color = ForgeTheme.colors.onSurface,
-    border: BorderStroke? = BorderStroke(
-        width = ForgeTheme.borders.thin,
-        color = ForgeTheme.colors.border,
-    ),
+    border: BorderStroke? =
+        BorderStroke(
+            width = ForgeTheme.borders.thin,
+            color = ForgeTheme.colors.border,
+        ),
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(LocalForgeContentColor provides contentColor) {
         Box(
-            modifier = modifier
-                .clip(shape)
-                .background(color, shape)
-                .then(if (border != null) Modifier.border(border, shape) else Modifier),
+            modifier =
+                modifier
+                    .clip(shape)
+                    .background(color, shape)
+                    .then(if (border != null) Modifier.border(border, shape) else Modifier),
         ) {
             content()
         }
@@ -58,7 +61,7 @@ fun ForgeSurface(
  * for feedback. Keep nested actions outside this surface.
  */
 @Composable
-fun ForgeSurface(
+public fun ForgeSurface(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -73,19 +76,25 @@ fun ForgeSurface(
     val interactions = remember { MutableInteractionSource() }
     val pressed by interactions.collectIsPressedAsState()
     ForgeSurface(
-        modifier = modifier.clip(shape).clickable(
-            interactionSource = interactions,
-            indication = null,
-            enabled = enabled,
-            role = Role.Button,
-            onClick = onClick,
-        ).semantics(mergeDescendants = true) {
-            if (accessibilityLabel != null) contentDescription = accessibilityLabel
-            if (!enabled) disabled()
-        },
+        modifier =
+            modifier
+                .defaultMinSize(
+                    minWidth = ForgeTheme.touchTargets.minimum,
+                    minHeight = ForgeTheme.touchTargets.minimum,
+                ).clip(shape)
+                .clickable(
+                    interactionSource = interactions,
+                    indication = null,
+                    enabled = enabled,
+                    role = Role.Button,
+                    onClick = onClick,
+                ).semantics(mergeDescendants = true) {
+                    if (accessibilityLabel != null) contentDescription = accessibilityLabel
+                    if (!enabled) disabled()
+                },
         shape = shape,
         color = if (pressed && enabled) pressedColor else color,
-        contentColor = if (enabled) contentColor else contentColor.copy(alpha = 0.38f),
+        contentColor = if (enabled) contentColor else contentColor.copy(alpha = ForgeTheme.opacity.disabledContent),
         border = border,
         content = content,
     )

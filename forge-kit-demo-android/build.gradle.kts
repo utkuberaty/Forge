@@ -5,12 +5,21 @@ plugins {
 
 android {
     namespace = "com.star.forgekitdemo"
-    compileSdk = libs.versions.androidCompileSdk.get().toInt()
+    compileSdk =
+        libs.versions.androidCompileSdk
+            .get()
+            .toInt()
 
     defaultConfig {
         applicationId = "com.star.forgekitdemo"
-        minSdk = libs.versions.androidMinSdk.get().toInt()
-        targetSdk = libs.versions.androidTargetSdk.get().toInt()
+        minSdk =
+            libs.versions.androidMinSdk
+                .get()
+                .toInt()
+        targetSdk =
+            libs.versions.androidTargetSdk
+                .get()
+                .toInt()
         versionCode = 1
         versionName = "0.1.0"
     }
@@ -26,6 +35,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":forge-kit-demo"))
+    val sharedDemo: org.gradle.api.artifacts.ProjectDependency = project.dependencies.project(":forge-kit-demo")
+    implementation(sharedDemo)
     implementation(libs.androidx.activity.compose)
 }

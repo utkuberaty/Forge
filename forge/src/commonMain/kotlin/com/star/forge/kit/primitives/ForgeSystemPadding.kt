@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
  * Use these instead of raw platform inset calls so app screens stay consistent
  * across Android and iOS.
  */
-enum class ForgeSystemPadding {
+public enum class ForgeSystemPadding {
     /** Avoids system bars, display cutouts, and other areas unsafe for drawing important UI. */
     SafeDrawing,
 
@@ -41,33 +41,28 @@ enum class ForgeSystemPadding {
 /**
  * Applies one Forge system padding group.
  */
-fun Modifier.forgeSystemPadding(
-    padding: ForgeSystemPadding = ForgeSystemPadding.SafeDrawing,
-): Modifier = when (padding) {
-    ForgeSystemPadding.SafeDrawing -> safeDrawingPadding()
-    ForgeSystemPadding.SafeContent -> safeContentPadding()
-    ForgeSystemPadding.SafeGestures -> safeGesturesPadding()
-    ForgeSystemPadding.SystemBars -> systemBarsPadding()
-    ForgeSystemPadding.StatusBars -> statusBarsPadding()
-    ForgeSystemPadding.NavigationBars -> navigationBarsPadding()
-    ForgeSystemPadding.Ime -> imePadding()
-}
+public fun Modifier.forgeSystemPadding(padding: ForgeSystemPadding = ForgeSystemPadding.SafeDrawing): Modifier =
+    when (padding) {
+        ForgeSystemPadding.SafeDrawing -> safeDrawingPadding()
+        ForgeSystemPadding.SafeContent -> safeContentPadding()
+        ForgeSystemPadding.SafeGestures -> safeGesturesPadding()
+        ForgeSystemPadding.SystemBars -> systemBarsPadding()
+        ForgeSystemPadding.StatusBars -> statusBarsPadding()
+        ForgeSystemPadding.NavigationBars -> navigationBarsPadding()
+        ForgeSystemPadding.Ime -> imePadding()
+    }
 
 /** Applies safe drawing padding for status bars, navigation bars, and cutouts. */
-fun Modifier.forgeSafeDrawingPadding(): Modifier =
-    forgeSystemPadding(ForgeSystemPadding.SafeDrawing)
+public fun Modifier.forgeSafeDrawingPadding(): Modifier = forgeSystemPadding(ForgeSystemPadding.SafeDrawing)
 
 /** Applies safe content padding for readable/tappable screen content. */
-fun Modifier.forgeSafeContentPadding(): Modifier =
-    forgeSystemPadding(ForgeSystemPadding.SafeContent)
+public fun Modifier.forgeSafeContentPadding(): Modifier = forgeSystemPadding(ForgeSystemPadding.SafeContent)
 
 /** Applies padding for areas that may conflict with system gestures. */
-fun Modifier.forgeSafeGesturesPadding(): Modifier =
-    forgeSystemPadding(ForgeSystemPadding.SafeGestures)
+public fun Modifier.forgeSafeGesturesPadding(): Modifier = forgeSystemPadding(ForgeSystemPadding.SafeGestures)
 
 /** Applies padding for system status/navigation bars. */
-fun Modifier.forgeSystemBarsPadding(): Modifier =
-    forgeSystemPadding(ForgeSystemPadding.SystemBars)
+public fun Modifier.forgeSystemBarsPadding(): Modifier = forgeSystemPadding(ForgeSystemPadding.SystemBars)
 
 /** Applies padding for the on-screen keyboard. Place before scroll modifiers. */
-fun Modifier.forgeImePadding(): Modifier = imePadding()
+public fun Modifier.forgeImePadding(): Modifier = imePadding()

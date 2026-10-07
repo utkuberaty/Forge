@@ -10,8 +10,15 @@ version = "0.1.0"
 kotlin {
     android {
         namespace = "com.star.forge.sdk.github"
-        compileSdk = libs.versions.androidCompileSdk.get().toInt()
-        minSdk = libs.versions.androidMinSdk.get().toInt()
+        compileSdk =
+            libs.versions.androidCompileSdk
+                .get()
+                .toInt()
+        minSdk =
+            libs.versions.androidMinSdk
+                .get()
+                .toInt()
+        withHostTest {}
     }
     iosArm64()
     iosSimulatorArm64()

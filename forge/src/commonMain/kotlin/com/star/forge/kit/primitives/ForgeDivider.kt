@@ -14,30 +14,34 @@ import com.star.forge.kit.theme.ForgeTheme
 
 /** Horizontal separator using Forge border tokens by default. */
 @Composable
-fun ForgeHorizontalDivider(
+public fun ForgeHorizontalDivider(
     modifier: Modifier = Modifier,
     thickness: Dp = ForgeTheme.borders.thin,
     color: Color = ForgeTheme.colors.border,
 ) {
+    require(thickness.value > 0f) { "divider thickness must be positive" }
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(thickness)
-            .background(color),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(thickness)
+                .background(color),
     )
 }
 
 /** Vertical separator using Forge border tokens by default. */
 @Composable
-fun ForgeVerticalDivider(
+public fun ForgeVerticalDivider(
     modifier: Modifier = Modifier,
     thickness: Dp = ForgeTheme.borders.thin,
     color: Color = ForgeTheme.colors.border,
 ) {
+    require(thickness.value > 0f) { "divider thickness must be positive" }
     Box(
-        modifier = modifier
-            .fillMaxHeight()
-            .width(thickness)
-            .background(color),
+        modifier =
+            modifier
+                .fillMaxHeight()
+                .width(thickness)
+                .background(color),
     )
 }

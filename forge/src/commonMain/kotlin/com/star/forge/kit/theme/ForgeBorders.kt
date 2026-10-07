@@ -11,18 +11,15 @@ import androidx.compose.ui.unit.dp
  * Border width scale used for dividers, outlines, and selected states.
  */
 @Immutable
-data class ForgeBorders(
+public data class ForgeBorders(
     /** Very subtle separator for high-density UI. */
-    val hairline: Dp = 0.5.dp,
-
+    public val hairline: Dp = 0.5.dp,
     /** Default border and divider width. */
-    val thin: Dp = 1.dp,
-
+    public val thin: Dp = 1.dp,
     /** Stronger border for active, focused, or emphasized controls. */
-    val medium: Dp = 1.5.dp,
-
+    public val medium: Dp = 1.5.dp,
     /** Heavy border for rare emphasis or debug/selection overlays. */
-    val thick: Dp = 2.dp,
+    public val thick: Dp = 2.dp,
 ) {
     /**
      * Creates a [BorderStroke] using Forge border tokens.
@@ -31,7 +28,7 @@ data class ForgeBorders(
      * outline color for surfaces, inputs, and dividers.
      */
     @Composable
-    fun stroke(
+    public fun stroke(
         width: Dp = thin,
         color: Color = ForgeTheme.colors.border,
     ): BorderStroke = BorderStroke(width, color)

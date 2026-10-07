@@ -14,7 +14,10 @@ import com.star.forge.kit.theme.ForgeTheme
 
 /** Selectable, horizontally scrollable plain code. It never executes or interprets the text. */
 @Composable
-fun ForgeCodeBlock(code: String, modifier: Modifier = Modifier) {
+public fun ForgeCodeBlock(
+    code: String,
+    modifier: Modifier = Modifier,
+) {
     ForgeSurface(modifier.fillMaxWidth(), color = ForgeTheme.colors.background) {
         SelectionContainer {
             ForgeText(

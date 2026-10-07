@@ -1,145 +1,134 @@
 package com.star.forge.kit.primitives
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.LayoutDirection
+import com.star.forge.kit.theme.ForgeSwitchSize
 import com.star.forge.kit.theme.ForgeTheme
 
-/** Size scale for [ForgeSwitch]. */
-enum class ForgeSwitchSize(
-    val width: Dp,
-    val height: Dp,
-    val thumbSize: Dp,
-    val thumbPadding: Dp,
-) {
-    Small(width = 42.dp, height = 24.dp, thumbSize = 18.dp, thumbPadding = 3.dp),
-    Medium(width = 52.dp, height = 30.dp, thumbSize = 22.dp, thumbPadding = 4.dp),
-    Large(width = 62.dp, height = 36.dp, thumbSize = 28.dp, thumbPadding = 4.dp),
-}
-
-/** Color state model for [ForgeSwitch]. */
 @Immutable
-data class ForgeSwitchColors(
-    val checkedTrack: Color,
-    val uncheckedTrack: Color,
-    val checkedThumb: Color,
-    val uncheckedThumb: Color,
-    val pressedTrack: Color,
-    val disabledTrack: Color,
-    val disabledThumb: Color,
-) {
-    fun track(checked: Boolean, enabled: Boolean, pressed: Boolean): Color = when {
-        !enabled -> disabledTrack
-        pressed -> pressedTrack
-        checked -> checkedTrack
-        else -> uncheckedTrack
-    }
+public data class ForgeSwitchColors(
+    public val checkedTrack: Color,
+    public val uncheckedTrack: Color,
+    public val checkedThumb: Color,
+    public val uncheckedThumb: Color,
+    public val pressedTrack: Color,
+    public val disabledTrack: Color,
+    public val disabledThumb: Color,
+)
 
-    fun thumb(checked: Boolean, enabled: Boolean): Color = when {
-        !enabled -> disabledThumb
-        checked -> checkedThumb
-        else -> uncheckedThumb
-    }
-}
-
-object ForgeSwitchDefaults {
-    /** Default Forge-owned switch colors. */
+public object ForgeSwitchDefaults {
     @Composable
-    fun colors(): ForgeSwitchColors = ForgeSwitchColors(
-        checkedTrack = ForgeTheme.colors.primary,
-        uncheckedTrack = ForgeTheme.colors.surfaceVariant,
-        checkedThumb = ForgeTheme.colors.onPrimary,
-        uncheckedThumb = ForgeTheme.colors.onSurfaceVariant,
-        pressedTrack = ForgeTheme.colors.primary.copy(alpha = 0.72f),
-        disabledTrack = ForgeTheme.colors.onSurface.copy(alpha = 0.10f),
-        disabledThumb = ForgeTheme.colors.onSurface.copy(alpha = 0.34f),
-    )
+    public fun colors(): ForgeSwitchColors {
+        val visual = ForgeTheme.components.switch.visuals
+        return ForgeSwitchColors(
+            checkedTrack = visual.selectedContainer ?: ForgeTheme.colors.primary,
+            uncheckedTrack = visual.unselectedContainer ?: ForgeTheme.colors.surfaceVariant,
+            checkedThumb = visual.selectedContent ?: ForgeTheme.colors.onPrimary,
+            uncheckedThumb = visual.unselectedContent ?: ForgeTheme.colors.onSurfaceVariant,
+            pressedTrack = ForgeTheme.colors.primary.copy(alpha = visual.pressedOpacity ?: ForgeTheme.opacity.pressed),
+            disabledTrack = visual.disabledContainer ?: ForgeTheme.colors.onSurface.copy(alpha = ForgeTheme.opacity.disabledContainer),
+            disabledThumb = visual.disabledContent ?: ForgeTheme.colors.onSurface.copy(alpha = ForgeTheme.opacity.disabledContent),
+        )
+    }
 }
 
-/**
- * Forge-owned switch.
- *
- * Use this for binary settings. The control is drawn by Forge and does not wrap
- * Material switch components.
- *
- * @param accessibilityLabel optional label when the switch is not paired with
- * visible text in the same accessible row.
- */
 @Composable
-fun ForgeSwitch(
+public fun ForgeSwitch(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    size: ForgeSwitchSize = ForgeSwitchSize.Medium,
+    size: ForgeSwitchSize = ForgeTheme.components.switch.medium,
     colors: ForgeSwitchColors = ForgeSwitchDefaults.colors(),
     accessibilityLabel: String? = null,
     accessibilityStateDescription: String? = null,
 ) {
+    require(size.width.value > 0f && size.height.value > 0f && size.thumbSize.value > 0f && size.thumbPadding.value >= 0f) {
+        "switch dimensions must be valid"
+    }
+    require(size.thumbSize + (size.thumbPadding * 2) <= size.height) { "switch thumb must fit inside the track" }
     val interactionSource = remember { MutableInteractionSource() }
     val pressed by interactionSource.collectIsPressedAsState()
+    val layoutDirection = LocalLayoutDirection.current
+    val targetFraction = if (checked.xor(layoutDirection == LayoutDirection.Rtl)) 1f else 0f
+    val fraction by animateFloatAsState(
+        targetValue = targetFraction,
+        animationSpec =
+            tween(
+                ForgeTheme.components.switch.visuals.motionDurationMillis ?: ForgeTheme.motion.normalDurationMillis,
+                easing = ForgeTheme.motion.standardEasing,
+            ),
+        label = "ForgeSwitchThumb",
+    )
+    val targetTrack =
+        when {
+            !enabled -> colors.disabledTrack
+            pressed -> colors.pressedTrack
+            checked -> colors.checkedTrack
+            else -> colors.uncheckedTrack
+        }
+    val targetThumb =
+        when {
+            !enabled -> colors.disabledThumb
+            checked -> colors.checkedThumb
+            else -> colors.uncheckedThumb
+        }
+    val track by animateColorAsState(targetTrack, tween(ForgeTheme.motion.fastDurationMillis), label = "ForgeSwitchTrack")
+    val thumb by animateColorAsState(targetThumb, tween(ForgeTheme.motion.fastDurationMillis), label = "ForgeSwitchThumbColor")
+    val touchTarget = ForgeTheme.components.switch.minimumTouchTarget ?: ForgeTheme.touchTargets.minimum
 
     Box(
-        modifier = modifier
-            .size(width = size.width, height = size.height)
-            .toggleable(
-                value = checked,
-                enabled = enabled,
-                role = Role.Switch,
-                interactionSource = interactionSource,
-                indication = null,
-                onValueChange = onCheckedChange,
-            )
-            .semantics {
-                if (accessibilityLabel != null) {
-                    contentDescription = accessibilityLabel
-                }
-                stateDescription = accessibilityStateDescription ?: if (checked) "On" else "Off"
-                if (!enabled) {
-                    disabled()
-                }
-            },
+        modifier =
+            modifier
+                .defaultMinSize(minWidth = touchTarget, minHeight = touchTarget)
+                .toggleable(
+                    value = checked,
+                    interactionSource = interactionSource,
+                    indication = null,
+                    enabled = enabled,
+                    role = Role.Switch,
+                    onValueChange = onCheckedChange,
+                ).semantics {
+                    accessibilityLabel?.let { contentDescription = it }
+                    accessibilityStateDescription?.let { stateDescription = it }
+                    if (!enabled) disabled()
+                },
+        contentAlignment = Alignment.Center,
     ) {
-        Canvas(modifier = Modifier.size(width = size.width, height = size.height)) {
-            val trackHeight = this.size.height
+        Canvas(Modifier.size(size.width, size.height)) {
             val trackWidth = this.size.width
-            val radius = trackHeight / 2f
+            val trackHeight = this.size.height
             val thumbRadius = size.thumbSize.toPx() / 2f
-            val thumbPadding = size.thumbPadding.toPx()
-            val minX = thumbPadding + thumbRadius
-            val maxX = trackWidth - thumbPadding - thumbRadius
-            val thumbX = if (checked) maxX else minX
-            val thumbY = trackHeight / 2f
-
-            drawRoundRect(
-                color = colors.track(checked = checked, enabled = enabled, pressed = pressed),
-                size = Size(width = trackWidth, height = trackHeight),
-                cornerRadius = CornerRadius(radius, radius),
-            )
-            drawCircle(
-                color = colors.thumb(checked = checked, enabled = enabled),
-                radius = thumbRadius,
-                center = Offset(thumbX, thumbY),
-            )
+            val minX = size.thumbPadding.toPx() + thumbRadius
+            val maxX = trackWidth - size.thumbPadding.toPx() - thumbRadius
+            val thumbX = minX + ((maxX - minX) * fraction)
+            drawRoundRect(track, size = Size(trackWidth, trackHeight), cornerRadius = CornerRadius(trackHeight / 2f))
+            drawCircle(thumb, radius = thumbRadius, center = Offset(thumbX, trackHeight / 2f))
         }
     }
 }
