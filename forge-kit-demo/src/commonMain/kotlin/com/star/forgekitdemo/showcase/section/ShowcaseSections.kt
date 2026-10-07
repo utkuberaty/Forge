@@ -48,6 +48,7 @@ fun ShowcaseSectionContent(
             ShowcaseSectionId.Inputs -> InputsSection(onEvent)
             ShowcaseSectionId.Selection -> SelectionSection(onEvent)
             ShowcaseSectionId.Feedback -> FeedbackSection()
+            ShowcaseSectionId.AppComponents -> AppComponentsSection(onEvent)
         }
     }
 }

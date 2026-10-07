@@ -2,7 +2,9 @@
 
 Forge Kit is a mobile-only Compose Multiplatform design system for Android and iOS. It provides
 Forge-owned primitives, immutable typed tokens, and a shared showcase. Product copy, validation,
-navigation, data, and services remain in consuming applications.
+navigation, data, and services remain in consuming applications. Whenever app development creates
+or improves a reusable capability, maintain Forge and integrate it in the same task; a second
+consumer is not required.
 
 ## Theme and tokens
 
@@ -56,6 +58,22 @@ Icon-only actions require a meaningful caller-provided accessibility label. Nati
 checked, selected, disabled, radio, and progress semantics are used instead of hard-coded spoken
 state text.
 
+## Shared app components
+
+`com.star.forge.kit.components` includes caller-configured `ForgeStatusPanel` loading/empty/error
+states, selectable `ForgeCodeBlock` text, `ForgeBadge` metadata, and `ForgeNavigationBar` tabs.
+Status actions require both `actionLabel` and `onAction`; changes use a polite live region.
+Navigation exposes tab roles, selection, disabled states, and token-based minimum touch targets.
+Apps own navigation and system insets.
+
+`ForgeSurface(onClick, ...)` adds one primary card action with pressed feedback, button semantics,
+and disabled state. Keep additional interactive actions outside the surface.
+`ForgeTextField(floatingLabelEnabled = true)` animates its label or placeholder above focused or
+filled input. The default is `false`, retaining the published persistent-label behavior and
+compact search layout. Supply an accessibility label when the visual hint disappears.
+`ForgeProgressIndicator` retains token-based sizes, colors, determinate/indeterminate ranges,
+and optional centered icons.
+
 ## Layout helpers
 
 - Token-aware padding: `Modifier.forgePadding(...)` and related overloads.
@@ -64,6 +82,8 @@ state text.
 - Specific inset groups: `Modifier.forgeSystemPadding(...)`.
 
 Android hosts should enable edge-to-edge and use `adjustResize` when text input is present.
+Platform `Theme.Light.NoTitleBar` hosts must enable `android:windowDrawsSystemBarBackgrounds`
+so automatic system-bar icon colors follow the Compose background.
 
 ## Showcase
 

@@ -1,6 +1,7 @@
 # Forge Repository Guidance
 
-Forge is a mobile-only Compose Multiplatform UI kit for Android and iOS. Keep reusable code in
+Forge Kit is a mobile-only Compose Multiplatform UI kit for Android and iOS.
+The optional `:forge-github` SDK also targets JVM; keep networking outside `:forge`. Keep reusable code in
 `forge/src/commonMain`; Android and iOS source sets are reserved for behavior that genuinely
 requires a platform API.
 
@@ -14,6 +15,10 @@ requires a platform API.
   sizes, or animation durations. Drawing ratios and normalized progress math are allowed.
 - Public component state is caller-owned. Forge does not own business validation, navigation,
   persistence, data loading, or product copy.
+
+Maintain Forge alongside app development: reusable capabilities and fixes belong in Forge in
+the same task, with app-specific composition, branding, copy, and business logic in the app.
+A second consumer is not required. Shared app components live in `com.star.forge.kit.components`.
 
 ## Accessibility
 
@@ -48,6 +53,7 @@ Use the narrowest relevant command, then run the release checks before publishin
 python3 scripts/check_ai_guidance.py
 ```
 
+Android SDK setup must explicitly request `platform-tools`, excluding the retired `tools` package.
 CI gives Gradle a 3 GiB heap, 1 GiB Metaspace, and at most two workers. Gradle-heavy CI phases
 use `--no-daemon` so Android, Apple, and publication checks do not retain idle daemons between
 invocations. Linux validates platform-independent and Android work; macOS validates and links iOS.

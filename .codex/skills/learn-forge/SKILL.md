@@ -27,6 +27,7 @@ and release maintainers.
    Run Android screenshot regression checks with `:forge-visual-tests:verifyRoborazziDebug`.
    Keep Android checks on Linux and Apple linking/tests on macOS; use the repository's bounded
    Gradle memory and worker settings instead of combining every platform in one invocation.
+   Android SDK setup explicitly requests `platform-tools` without the retired `tools` package.
    Release tags publish through GitHub Actions to GitHub Packages; never put package credentials
    in repository files. If release-event delivery fails, dispatch `release.yml` with the existing
    release version so it checks out the immutable tag. Treat empty signing variables as absent;
@@ -34,8 +35,9 @@ and release maintainers.
 
 ## Invariants
 
-- Forge targets mobile Android and iOS only.
-- Product copy, validation logic, navigation, data, and services stay in applications.
+- Forge Kit targets mobile Android and iOS only; the separate GitHub SDK also supports JVM.
+- Product copy, validation logic, navigation, and business logic stay in applications.
+- Maintain reusable components and SDK capabilities in Forge during the same app task.
 - Design decisions resolve through typed tokens; primitives do not introduce raw design values.
 - Interactive surfaces are at least 48dp and expose correct Compose semantics.
 - Public API or release changes update the relevant agent guidance in the same change.

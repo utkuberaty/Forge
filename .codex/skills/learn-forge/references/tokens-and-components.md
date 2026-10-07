@@ -15,3 +15,9 @@ are not design tokens.
 Keep component state hoisted. Loading labels, validation messages, accessibility descriptions,
 and all other product wording belong to callers. Promote app components into Forge only when their
 behavior is product-agnostic and reusable.
+
+Shared app components include status panels, code blocks, badges, and navigation bars. Clickable
+surfaces expose one button action. Fields retain caller-owned feedback and offer opt-in animated
+floating labels; compact searches keep `floatingLabelEnabled = false` and an accessibility label.
+Progress uses the token-aware determinate/indeterminate primitive. Maintain these generic APIs
+alongside their app integrations without requiring a second consumer.

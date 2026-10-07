@@ -1,7 +1,10 @@
 package com.star.forge.kit.primitives
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -133,6 +136,8 @@ public object ForgeTextFieldDefaults {
 
 /**
  * Forge-owned text field. Validation logic and every displayed message remain caller-owned.
+ * Set [floatingLabelEnabled] to animate the label (or placeholder) above focused or filled input.
+ * The default preserves a persistent explicit label; compact searches can keep it disabled.
  */
 @Composable
 public fun ForgeTextField(
@@ -158,11 +163,15 @@ public fun ForgeTextField(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     accessibilityLabel: String? = label ?: placeholder,
     accessibilityStateDescription: String? = null,
+    floatingLabelEnabled: Boolean = false,
 ) {
     require(minLines > 0) { "minLines must be positive" }
     require(maxLines >= minLines) { "maxLines must be greater than or equal to minLines" }
     require(!singleLine || (minLines == 1 && maxLines == 1)) { "singleLine fields must use exactly one line" }
     val focused by interactionSource.collectIsFocusedAsState()
+    val floatingText = label ?: placeholder
+    val shouldFloat = floatingLabelEnabled && floatingText != null && (focused || value.isNotEmpty())
+    val hintAnimation = tween<Float>(ForgeTheme.motion.fastDurationMillis, easing = ForgeTheme.motion.standardEasing)
     val invalid = feedback as? ForgeFieldFeedback.Invalid
     val message = feedback?.message ?: supportingText
     val animation = tween<Color>(ForgeTheme.motion.fastDurationMillis, easing = ForgeTheme.motion.standardEasing)
@@ -209,8 +218,12 @@ public fun ForgeTextField(
             },
         verticalArrangement = Arrangement.spacedBy(ForgeTheme.spacing.xs),
     ) {
-        label?.let {
-            ForgeText(text = it, color = labelColor, style = ForgeTheme.typography.labelMedium)
+        if (floatingLabelEnabled) {
+            AnimatedVisibility(visible = shouldFloat, enter = fadeIn(hintAnimation), exit = fadeOut(hintAnimation)) {
+                floatingText?.let { ForgeText(text = it, color = labelColor, style = ForgeTheme.typography.labelMedium) }
+            }
+        } else {
+            label?.let { ForgeText(text = it, color = labelColor, style = ForgeTheme.typography.labelMedium) }
         }
 
         BasicTextField(
@@ -247,9 +260,10 @@ public fun ForgeTextField(
                 ) {
                     TextFieldIconSlot(leadingIcon, enabled, leading = true)
                     Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
-                        if (value.isEmpty() && placeholder != null) {
+                        val inlineHint = if (floatingLabelEnabled) floatingText else placeholder
+                        if (value.isEmpty() && inlineHint != null && !shouldFloat) {
                             ForgeText(
-                                text = placeholder,
+                                text = inlineHint,
                                 color = colors.placeholder,
                                 style = ForgeTheme.typography.bodyLarge,
                             )
