@@ -11,6 +11,9 @@ Material component wrappers or raw design values.
 The public package is `io.github.utkuberaty:forge-kit`. Kotlin APIs remain under
 `com.star.forge.kit.*`.
 
+The optional `:forge-github` source module supplies a read-only GitHub REST client for Android,
+iOS, and JVM without adding networking dependencies to the UI kit. See [GitHub SDK](docs/forge-github.md).
+
 ## Platforms
 
 - Android API 23 and newer.
@@ -74,7 +77,7 @@ does not use JSON token loading, mutable global themes, or a built-in visual tok
 
 Forge includes buttons, icon buttons, symbols, text, images, surfaces, dividers, fields,
 checkboxes, switches, sliders, progress indicators, radio buttons, selection rows, and segmented
-controls. Interactive visuals may be compact, but every touch target is at least 48dp.
+controls, plus shared status panels, code blocks, badges, and navigation bars. Interactive visuals may be compact, but every touch target is at least 48dp.
 
 The shared showcase under `:forge-kit-demo` renders the same registry on Android and iOS and
 includes default/personalized brands, light/dark modes, RTL, long content, state examples, and an

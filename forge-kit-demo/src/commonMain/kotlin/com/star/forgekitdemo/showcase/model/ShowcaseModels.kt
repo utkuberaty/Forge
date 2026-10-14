@@ -6,7 +6,7 @@ data class ShowcaseSection(
     val description: String,
 )
 
-enum class ShowcaseSectionId { Actions, Inputs, Selection, Feedback }
+enum class ShowcaseSectionId { Actions, Inputs, Selection, Feedback, AppComponents }
 
 data class ShowcaseConfiguration(
     val dark: Boolean,

@@ -20,11 +20,13 @@ jobs:
           java-version: 17
           cache: gradle
       - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
       - name: Formatting, token, and API checks
         run: ./gradlew ktlintCheck :forge:verifyPrimitiveTokens :forge:checkKotlinAbi --warning-mode fail --no-daemon
       - name: Android tests, lint, visual regression, and assembly
         run: |
-          ./gradlew :forge:testAndroidHostTest :forge:lintAnalyzeAndroidHostTest \
+          ./gradlew :forge-github:jvmTest :forge-github:assembleAndroidMain :forge:testAndroidHostTest :forge:lintAnalyzeAndroidHostTest \
             :forge:assembleAndroidMain :forge-visual-tests:verifyRoborazziDebug \
             :forge-visual-tests:lintDebug :forge-kit-demo-android:lintDebug \
             :forge-kit-demo-android:assembleDebug --warning-mode fail --no-daemon
@@ -41,7 +43,7 @@ jobs:
           cache: gradle
       - name: Compile, test, and link Apple targets
         run: |
-          ./gradlew :forge:compileKotlinIosArm64 :forge:iosSimulatorArm64Test \
+          ./gradlew :forge-github:compileKotlinIosArm64 :forge-github:compileKotlinIosSimulatorArm64 :forge:compileKotlinIosArm64 :forge:iosSimulatorArm64Test \
             :forge-kit-demo:linkDebugFrameworkIosSimulatorArm64 \
             --warning-mode fail --no-daemon
 
@@ -58,6 +60,8 @@ jobs:
           java-version: 17
           cache: gradle
       - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
       - name: Publish to isolated repository and consume only Maven coordinates
         run: |
           smoke_repo="$(mktemp -d)"

@@ -3,6 +3,7 @@
 ## Modules
 
 - `:forge`: public Compose Multiplatform library for Android and iOS.
+- `:forge-github`: optional read-only GitHub SDK for Android, iOS, and JVM.
 - `:forge-kit-demo`: shared component showcase and iOS framework.
 - `:forge-kit-demo-android`: Android host for the shared showcase.
 - `:forge-visual-tests`: Android Roborazzi screenshot-regression suite and committed baselines.
@@ -12,12 +13,15 @@
 
 - `com.star.forge.kit.theme`: foundation, semantic, component tokens, and theme providers.
 - `com.star.forge.kit.primitives`: low-level and composed Forge UI controls.
+- `com.star.forge.kit.components`: status panels, code blocks, badges, and navigation bars.
+- `com.star.forge.sdk.github`: typed client, pagination, and rate-limit errors.
 - `com.star.forgekitdemo`: reusable examples and interactive showcase cases.
 
 ## Focused Commands
 
 ```bash
 ./gradlew ktlintCheck :forge-visual-tests:lintDebug :forge-kit-demo-android:lintDebug
+./gradlew :forge-github:jvmTest
 ./gradlew :forge:check
 ./gradlew :forge:verifyPrimitiveTokens
 ./gradlew :forge-visual-tests:verifyRoborazziDebug
